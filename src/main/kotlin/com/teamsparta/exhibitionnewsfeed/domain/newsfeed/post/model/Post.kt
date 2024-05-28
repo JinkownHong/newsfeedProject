@@ -1,6 +1,6 @@
 package com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.model
 
-import com.teamsparta.exhibitionnewsfeed.domain.user.model.Users
+import com.teamsparta.exhibitionnewsfeed.domain.user.model.User
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
@@ -19,7 +19,7 @@ class Post (
     val createdAt : LocalDateTime = LocalDateTime.now(),
 
     @ManyToOne
-    val users : Users
+    val user : User
 )
 {
     @Id
