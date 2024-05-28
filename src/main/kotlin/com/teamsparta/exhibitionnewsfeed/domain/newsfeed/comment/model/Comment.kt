@@ -1,7 +1,7 @@
 package com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.model
 
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.model.Post
-import com.teamsparta.exhibitionnewsfeed.domain.user.model.Users
+import com.teamsparta.exhibitionnewsfeed.domain.user.model.User
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
@@ -16,7 +16,7 @@ class Comment (
     val createdAt : LocalDateTime = LocalDateTime.now(),
 
     @ManyToOne
-    val users : Users,
+    val user : User,
 
     @ManyToOne
     val post : Post

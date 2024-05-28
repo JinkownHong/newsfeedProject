@@ -1,6 +1,6 @@
 package com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.model
 
-import com.teamsparta.exhibitionnewsfeed.domain.user.model.Users
+import com.teamsparta.exhibitionnewsfeed.domain.user.model.User
 import jakarta.persistence.*
 
 @Entity
@@ -9,7 +9,7 @@ class PostLike (
     val post: Post,
 
     @ManyToOne
-    val users : Users
+    val user : User
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
