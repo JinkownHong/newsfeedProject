@@ -14,7 +14,7 @@ data class PostsResponse(
     companion object {
         fun Post.toResponse(): PostsResponse {
             return PostsResponse(
-                id = id!!,
+                id = id ?: throw IllegalStateException("ID cannot be Null"),
                 title = title,
                 content = content,
                 createdAt = createdAt,
