@@ -4,6 +4,7 @@ import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.CreatePostRequ
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.PostResponse
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.PostsResponse
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.service.PostService
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -21,7 +22,7 @@ class PostController(
     }
 
     @PostMapping
-    fun createPost(@RequestBody request: CreatePostRequest): ResponseEntity<PostsResponse> {
+    fun createPost(@Valid @RequestBody request: CreatePostRequest): ResponseEntity<PostsResponse> {
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(postService.createPost(request))
