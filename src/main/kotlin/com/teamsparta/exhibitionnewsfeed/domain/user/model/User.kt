@@ -1,30 +1,33 @@
 package com.teamsparta.exhibitionnewsfeed.domain.user.model
 
-import com.teamsparta.exhibitionnewsfeed.domain.user.dto.SignUpResponse
+import com.teamsparta.exhibitionnewsfeed.domain.user.dto.UserResponse
 import jakarta.persistence.*
+import org.springframework.security.crypto.password.PasswordEncoder
 
 @Entity
 @Table(name = "users")
-class User (
+class User(
     @Column(name = "email")
     val email: String,
 
     @Column(name = "password")
-    val password : String,
+    val password: String,
 
     @Column(name = "nickname")
-    var nickname : String,
+    var nickname: String,
 
     @Column(name = "description", nullable = true)
-    var description : String?,
-)
-{
-    fun toResponse(): SignUpResponse {
-        return SignUpResponse(
+    var description: String?,
+) {
+    fun toResponse(): UserResponse {
+        return UserResponse(
             id = this.id ?: throw IllegalStateException("User ID cannot be null"),
-            email = this.email,
             nickname = this.nickname,
         )
+    }
+
+    fun isValidPassword(rawPassword: String, passwordEncoder: PasswordEncoder): Boolean {
+        return passwordEncoder.matches(rawPassword, this.password)
     }
 
     @Id
