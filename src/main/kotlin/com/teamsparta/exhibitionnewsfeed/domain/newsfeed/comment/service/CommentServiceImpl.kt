@@ -2,6 +2,7 @@ package com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.service
 
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.dto.CommentResponse
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.dto.CreateCommentRequest
+import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.dto.UpdateCommentRequest
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.model.Comment
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.repository.CommentRepository
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.repository.PostRepository
@@ -36,6 +37,21 @@ class CommentServiceImpl(
 
         return commentRepository.save(comment).toResponse()
     }
+
+    @Transactional
+    override fun updateComment(
+        postId: Long,
+        commentId: Long,
+        updateCommentRequest: UpdateCommentRequest
+    ): CommentResponse {
+        postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
+        val comment = commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("Comment", commentId)
+
+        comment.content = updateCommentRequest.content
+
+        return comment.toResponse()
+    }
+
 }
 
 
