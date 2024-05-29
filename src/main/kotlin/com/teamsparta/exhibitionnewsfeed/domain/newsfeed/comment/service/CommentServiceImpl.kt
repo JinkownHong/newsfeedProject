@@ -52,6 +52,14 @@ class CommentServiceImpl(
         return comment.toResponse()
     }
 
+    @Transactional
+    override fun deleteComment(postId: Long, commentId: Long) {
+        postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
+        val comment = commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("Comment", commentId)
+
+        commentRepository.delete(comment)
+    }
+
 }
 
 
