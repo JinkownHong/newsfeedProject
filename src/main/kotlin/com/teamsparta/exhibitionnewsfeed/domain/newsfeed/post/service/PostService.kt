@@ -11,4 +11,5 @@ interface PostService {
     fun getAllPosts(): List<PostsResponse>
     fun createPost(request: CreatePostRequest): PostsResponse
     fun updatePost(postId: Long, request: UpdatePostRequest): PostResponse
+    fun deletePost(postId: Long)
 }

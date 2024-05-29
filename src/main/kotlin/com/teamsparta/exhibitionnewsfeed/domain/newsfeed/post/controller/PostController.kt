@@ -43,5 +43,13 @@ class PostController(
             .body(postService.updatePost(postId, request))
     }
 
+    @DeleteMapping("/{postId}")
+    fun deletePost(@PathVariable postId: Long): ResponseEntity<Unit> {
+        postService.deletePost(postId)
+        return ResponseEntity
+            .status(HttpStatus.NO_CONTENT)
+            .build()
+    }
+
 }
 

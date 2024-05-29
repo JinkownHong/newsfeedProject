@@ -36,4 +36,9 @@ class PostServiceImpl(
 
         return PostResponse.from(foundPost)
     }
+
+    override fun deletePost(postId: Long) {
+        val foundPost = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
+        postRepository.delete(foundPost)
+    }
 }
