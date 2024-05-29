@@ -8,4 +8,6 @@ interface CommentService {
     fun createComment(postId: Long, createCommentRequest: CreateCommentRequest): CommentResponse
 
     fun updateComment(postId: Long, commentId: Long, updateCommentRequest: UpdateCommentRequest): CommentResponse
+
+    fun deleteComment(postId: Long, commentId: Long): Unit
 }
