@@ -8,6 +8,7 @@ import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.UpdatePostRequ
 
 interface PostService {
     fun getPostById(postId: Long): PostResponse
+    fun getAllPosts(): List<PostsResponse>
     fun createPost(request: CreatePostRequest): PostsResponse
     fun updatePost(postId: Long, request: UpdatePostRequest): PostResponse
 }

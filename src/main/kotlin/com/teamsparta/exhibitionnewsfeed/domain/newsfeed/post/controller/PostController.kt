@@ -22,6 +22,13 @@ class PostController(
             .body(postService.getPostById(postId))
     }
 
+    @GetMapping
+    fun getAllPosts(): ResponseEntity<List<PostsResponse>> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(postService.getAllPosts())
+    }
+
     @PostMapping
     fun createPost(@Valid @RequestBody request: CreatePostRequest): ResponseEntity<PostsResponse> {
         return ResponseEntity
