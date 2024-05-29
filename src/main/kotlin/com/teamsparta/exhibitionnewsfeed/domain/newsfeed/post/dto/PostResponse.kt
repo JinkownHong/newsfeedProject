@@ -18,6 +18,7 @@ data class PostResponse(
                 post.title,
                 post.content,
                 post.createdAt,
+                post.updatedAt,
                 post.user.toResponse(),
                 post.comments.map { CommentResponse.from(it) })
         }

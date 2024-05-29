@@ -5,8 +5,6 @@ import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.UpdatePostRequ
 import com.teamsparta.exhibitionnewsfeed.domain.user.model.User
 import com.teamsparta.exhibitionnewsfeed.exception.ComparativeVerificationException
 import jakarta.persistence.*
-import org.hibernate.annotations.CreationTimestamp
-import java.time.LocalDateTime
 
 @Entity
 @Table(name = "post")
@@ -18,17 +16,13 @@ class Post(
     @Column(name = "content")
     var content: String,
 
-    @CreationTimestamp
-    @Column(updatable = false)
-    val createdAt: LocalDateTime = LocalDateTime.now(),
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     var user: User,
 
     @OneToMany(mappedBy = "post", cascade = [(CascadeType.ALL)])
     val comments: List<Comment> = emptyList()
-) {
+) : BaseTime() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
