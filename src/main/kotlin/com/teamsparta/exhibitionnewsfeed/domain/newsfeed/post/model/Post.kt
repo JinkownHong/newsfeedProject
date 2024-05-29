@@ -1,13 +1,14 @@
 package com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.model
 
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.model.Comment
+import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.UpdatePostRequest
 import com.teamsparta.exhibitionnewsfeed.domain.user.model.User
+import com.teamsparta.exhibitionnewsfeed.exception.ComparativeVerificationException
 import jakarta.persistence.*
-import org.hibernate.annotations.CreationTimestamp
-import java.time.LocalDateTime
 
 @Entity
-class Post (
+@Table(name = "post")
+class Post(
 
     @Column(name = "title")
     var title: String,
@@ -15,18 +16,22 @@ class Post (
     @Column(name = "content")
     var content: String,
 
-    @CreationTimestamp
-    @Column(updatable = false)
-    val createdAt: LocalDateTime = LocalDateTime.now(),
-
     @ManyToOne
-    val user : User
-)
-{
+    @JoinColumn(name = "user_id")
+    var user: User,
+
+    @OneToMany(mappedBy = "post", cascade = [(CascadeType.ALL)])
+    val comments: List<Comment> = emptyList()
+) : BaseTime() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
 
-    @OneToMany(mappedBy = "post", cascade = [(CascadeType.ALL)])
-    val comments: List<Comment> = emptyList()
+    fun updatePostField(request: UpdatePostRequest) {
+        title = request.title
+        content = request.content
+        if (user.id != request.userId) {
+            throw ComparativeVerificationException(request.userId)
+        }
+    }
 }

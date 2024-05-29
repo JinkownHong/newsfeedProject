@@ -9,7 +9,7 @@ data class PostsResponse(
     val title: String,
     val content: String,
     val user: User,
-    val createdAt: LocalDateTime,
+    val createdAt: LocalDateTime?,
 ) {
     companion object {
         fun Post.toResponse(): PostsResponse {
