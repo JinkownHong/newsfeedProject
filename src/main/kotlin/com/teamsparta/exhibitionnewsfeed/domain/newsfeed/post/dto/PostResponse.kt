@@ -8,7 +8,8 @@ import java.time.LocalDateTime
 data class PostResponse(
     val title: String,
     val content: String,
-    val createdAt: LocalDateTime,
+    val createdAt: LocalDateTime?,
+    val updateAt: LocalDateTime?,
     val user: UserResponse,
     val comments: List<CommentResponse>
 ) {

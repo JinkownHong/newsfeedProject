@@ -30,7 +30,7 @@ class Post(
     fun updatePostField(request: UpdatePostRequest) {
         title = request.title
         content = request.content
-        if (user.id == request.userId) {
+        if (user.id != request.userId) {
             throw ComparativeVerificationException(request.userId)
         }
     }
