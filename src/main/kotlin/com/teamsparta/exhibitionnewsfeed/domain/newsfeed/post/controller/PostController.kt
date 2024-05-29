@@ -3,6 +3,7 @@ package com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.controller
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.CreatePostRequest
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.PostResponse
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.PostsResponse
+import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.UpdatePostRequest
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.service.PostService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -27,4 +28,13 @@ class PostController(
             .status(HttpStatus.CREATED)
             .body(postService.createPost(request))
     }
+
+    @PutMapping("/{postId}")
+    fun updatePost(@PathVariable postId: Long, @RequestBody request: UpdatePostRequest): ResponseEntity<PostResponse> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(postService.updatePost(postId, request))
+    }
+
 }
+
