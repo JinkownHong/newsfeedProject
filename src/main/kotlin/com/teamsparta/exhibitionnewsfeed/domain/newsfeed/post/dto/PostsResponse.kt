@@ -12,13 +12,13 @@ data class PostsResponse(
     val createdAt: LocalDateTime,
 ) {
     companion object {
-        fun Post.toResponse(): PostsResponse {
+        fun from(post: Post): PostsResponse {
             return PostsResponse(
-                id = id ?: throw IllegalStateException("ID cannot be Null"),
-                title = title,
-                content = content,
-                createdAt = createdAt,
-                user = user,
+                id = post.id ?: throw IllegalStateException("ID cannot be Null"),
+                title = post.title,
+                content = post.content,
+                createdAt = post.createdAt,
+                user = post.user,
             )
         }
     }

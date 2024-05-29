@@ -3,7 +3,6 @@ package com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.service
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.CreatePostRequest
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.PostResponse
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.PostsResponse
-import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.PostsResponse.Companion.toResponse
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.toEntity
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.repository.PostRepository
 import com.teamsparta.exhibitionnewsfeed.domain.user.repository.UserRepository
@@ -25,7 +24,8 @@ class PostServiceImpl(
     override fun createPost(request: CreatePostRequest): PostsResponse {
         // TODO: 로그인 구현 후 nickname 가져오는 방식 수정
         val user = userRepository.findByIdOrNull(1L) ?: throw ModelNotFoundException("User", 1)
+        val post = postRepository.save(request.toEntity(user))
 
-        return postRepository.save(request.toEntity(user)).toResponse()
+        return PostsResponse.from(post)
     }
 }
