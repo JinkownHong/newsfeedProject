@@ -5,6 +5,7 @@ import com.teamsparta.exhibitionnewsfeed.auth.RequestUser
 import com.teamsparta.exhibitionnewsfeed.domain.user.dto.*
 import com.teamsparta.exhibitionnewsfeed.domain.user.service.UserService
 import com.teamsparta.exhibitionnewsfeed.exception.UnauthorizedException
+import io.swagger.v3.oas.annotations.Parameter
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -40,7 +41,7 @@ class UserController(
     @PostMapping("/profile/{userId}/verify")
     fun verifyPassword(
         @PathVariable userId: Long,
-        @RequestUser authUser: AuthUser,
+        @RequestUser @Parameter(hidden = true) authUser: AuthUser,
         @RequestBody request: Map<String, String>,
     ): ResponseEntity<Any> {
         if (userId != authUser.id) throw UnauthorizedException("권한이 없습니다.")
@@ -53,7 +54,7 @@ class UserController(
     @PatchMapping("/profile/{userId}")
     fun updateProfile(
         @PathVariable userId: Long,
-        @RequestUser authUser: AuthUser,
+        @RequestUser @Parameter(hidden = true) authUser: AuthUser,
         @RequestBody request: UpdateUserProfileRequest
     ): ResponseEntity<UserProfileResponse> {
         if (userId != authUser.id) throw UnauthorizedException("권한이 없습니다.")
