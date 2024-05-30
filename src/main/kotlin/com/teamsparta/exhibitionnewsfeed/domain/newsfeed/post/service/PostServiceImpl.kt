@@ -33,7 +33,7 @@ class PostServiceImpl(
     @Transactional
     override fun createPost(request: CreatePostRequest): PostsResponse {
         // TODO: 로그인 구현 후 nickname 가져오는 방식 수정
-        val user = userRepository.findByIdOrNull(1L) ?: throw ModelNotFoundException("User", 1)
+        val user = userRepository.findByIdOrNull(request.userId) ?: throw ModelNotFoundException("User", request.userId)
         var savePost = postRepository.save(request.toEntity(user))
         val tagName = request.tagName
 
@@ -60,11 +60,7 @@ class PostServiceImpl(
         if (tagName.isNotBlank()) {
             val tagList = foundPost.hashTagList(tagName)
             tagList.forEach { tag ->
-                if (hashTagRepository.findHashTagByTagName(tag)?.tagName == tag) {
-                    throw IllegalStateException("TagName: $tag already exists")
-                } else {
-                    createHashTag(tag, foundPost)
-                }
+                if (hashTagRepository.findHashTagByTagName(tag)?.tagName != tag) createHashTag(tag, foundPost)
             }
         }
         return PostResponse.from(foundPost)
