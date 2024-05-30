@@ -5,5 +5,7 @@ data class UpdatePostRequest(
 
     val content: String,
 
-    val userId: Long
+    val userId: Long,
+
+    val tagName: String
 )
