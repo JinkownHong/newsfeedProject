@@ -7,9 +7,8 @@ data class PostTagResponse(
 ) {
     companion object {
         fun from(postTag: PostTag): PostTagResponse {
-            return PostTagResponse(
-                postTag.hashTag.toResponse()
-            )
+            return PostTagResponse(HashTagResponse.from(postTag.hashTag))
         }
     }
 }
+
