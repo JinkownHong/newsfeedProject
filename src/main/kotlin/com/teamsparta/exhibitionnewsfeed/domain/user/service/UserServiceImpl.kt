@@ -39,4 +39,18 @@ class UserServiceImpl(
             ?: throw ModelNotFoundException("User id $userId not found.", userId)
         return UserProfileResponse.from(user)
     }
+
+    override fun verifyPassword(userId: Long, password: String?): Boolean {
+        val user =
+            userRepository.findByIdOrNull(userId) ?: throw ModelNotFoundException("User id $userId not found.", userId)
+        return user.isValidPassword(password ?: "", passwordEncoder)
+    }
+
+    @Transactional
+    override fun updateProfile(userId: Long, request: UpdateUserProfileRequest): UserProfileResponse {
+        val user =
+            userRepository.findByIdOrNull(userId) ?: throw ModelNotFoundException("User id $userId not found.", userId)
+        user.update(request, passwordEncoder)
+        return UserProfileResponse.from(user)
+    }
 }

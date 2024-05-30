@@ -1,5 +1,6 @@
 package com.teamsparta.exhibitionnewsfeed.domain.user.model
 
+import com.teamsparta.exhibitionnewsfeed.domain.user.dto.UpdateUserProfileRequest
 import com.teamsparta.exhibitionnewsfeed.domain.user.dto.UserResponse
 import jakarta.persistence.*
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -11,7 +12,7 @@ class User(
     val email: String,
 
     @Column(name = "password")
-    val password: String,
+    var password: String,
 
     @Column(name = "nickname")
     var nickname: String,
@@ -28,6 +29,12 @@ class User(
 
     fun isValidPassword(rawPassword: String, passwordEncoder: PasswordEncoder): Boolean {
         return passwordEncoder.matches(rawPassword, this.password)
+    }
+
+    fun update(request: UpdateUserProfileRequest, passwordEncoder: PasswordEncoder) {
+        nickname = request.nickname
+        description = request.description
+        password = passwordEncoder.encode(request.password)
     }
 
     @Id
