@@ -20,7 +20,10 @@ fun CreatePostRequest.toEntity(user: User): Post {
         content = this.content,
         user = user //TODO: 로그인 구현 후 다른방식으로 수정
     )
-
 }
 
-
+fun CreatePostRequest.toHashTagEntity(): HashTag {
+    return HashTag(
+        tagName = tagName
+    )
+}

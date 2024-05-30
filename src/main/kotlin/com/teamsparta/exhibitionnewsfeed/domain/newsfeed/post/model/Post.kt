@@ -21,7 +21,10 @@ class Post(
     var user: User,
 
     @OneToMany(mappedBy = "post", cascade = [(CascadeType.ALL)])
-    val comments: List<Comment> = emptyList()
+    val comments: List<Comment> = emptyList(),
+
+    @OneToMany(mappedBy = "post", cascade = [(CascadeType.ALL)], orphanRemoval = true)
+    var postTag: MutableList<PostTag> = mutableListOf(),
 ) : BaseTime() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
