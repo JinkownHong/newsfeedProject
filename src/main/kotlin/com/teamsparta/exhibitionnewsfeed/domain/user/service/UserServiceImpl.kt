@@ -1,5 +1,6 @@
 package com.teamsparta.exhibitionnewsfeed.domain.user.service
 
+import com.teamsparta.exhibitionnewsfeed.auth.JwtTokenProvider
 import com.teamsparta.exhibitionnewsfeed.domain.user.dto.LoginRequest
 import com.teamsparta.exhibitionnewsfeed.domain.user.dto.LoginResponse
 import com.teamsparta.exhibitionnewsfeed.domain.user.dto.SignUpRequest
@@ -12,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class UserServiceImpl(
     private val userRepository: UserRepository,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    private val jwtTokenProvider: JwtTokenProvider
 ) : UserService {
 
     @Transactional
@@ -28,6 +30,8 @@ class UserServiceImpl(
                 passwordEncoder
             )
         ) throw IllegalArgumentException("잘못된 Email/PW 입니다.")
-        return LoginResponse.from(user)
+
+        val token = jwtTokenProvider.generateToken(user)
+        return LoginResponse.from(user, token)
     }
 }

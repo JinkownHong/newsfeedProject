@@ -7,9 +7,14 @@ import org.springframework.security.crypto.password.PasswordEncoder
 
 @Configuration
 class AuthConfig {
-    
+
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
+    }
+
+    @Bean
+    fun jwtTokenProvider(): JwtTokenProvider {
+        return JwtTokenProvider()
     }
 }
