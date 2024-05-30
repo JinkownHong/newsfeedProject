@@ -1,11 +1,10 @@
 package com.teamsparta.exhibitionnewsfeed.domain.user.service
 
 import com.teamsparta.exhibitionnewsfeed.auth.JwtTokenProvider
-import com.teamsparta.exhibitionnewsfeed.domain.user.dto.LoginRequest
-import com.teamsparta.exhibitionnewsfeed.domain.user.dto.LoginResponse
-import com.teamsparta.exhibitionnewsfeed.domain.user.dto.SignUpRequest
-import com.teamsparta.exhibitionnewsfeed.domain.user.dto.SignUpResponse
+import com.teamsparta.exhibitionnewsfeed.domain.user.dto.*
 import com.teamsparta.exhibitionnewsfeed.domain.user.repository.UserRepository
+import com.teamsparta.exhibitionnewsfeed.exception.ModelNotFoundException
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -33,5 +32,25 @@ class UserServiceImpl(
 
         val token = jwtTokenProvider.generateToken(user)
         return LoginResponse.from(user, token)
+    }
+
+    override fun getProfile(userId: Long): UserProfileResponse {
+        val user = userRepository.findByIdOrNull(userId)
+            ?: throw ModelNotFoundException("User id $userId not found.", userId)
+        return UserProfileResponse.from(user)
+    }
+
+    override fun verifyPassword(userId: Long, password: String?): Boolean {
+        val user =
+            userRepository.findByIdOrNull(userId) ?: throw ModelNotFoundException("User id $userId not found.", userId)
+        return user.isValidPassword(password ?: "", passwordEncoder)
+    }
+
+    @Transactional
+    override fun updateProfile(userId: Long, request: UpdateUserProfileRequest): UserProfileResponse {
+        val user =
+            userRepository.findByIdOrNull(userId) ?: throw ModelNotFoundException("User id $userId not found.", userId)
+        user.update(request, passwordEncoder)
+        return UserProfileResponse.from(user)
     }
 }

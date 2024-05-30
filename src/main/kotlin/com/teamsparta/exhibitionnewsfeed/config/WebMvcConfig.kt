@@ -1,4 +1,4 @@
-package com.teamsparta.exhibitionnewsfeed
+package com.teamsparta.exhibitionnewsfeed.config
 
 import com.teamsparta.exhibitionnewsfeed.auth.AuthArgumentResolver
 import com.teamsparta.exhibitionnewsfeed.auth.JwtTokenProvider
