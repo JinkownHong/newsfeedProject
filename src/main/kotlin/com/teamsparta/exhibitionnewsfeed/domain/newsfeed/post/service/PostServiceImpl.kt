@@ -34,12 +34,19 @@ class PostServiceImpl(
     override fun createPost(request: CreatePostRequest): PostsResponse {
         // TODO: 로그인 구현 후 nickname 가져오는 방식 수정
         val user = userRepository.findByIdOrNull(1L) ?: throw ModelNotFoundException("User", 1)
+        var savePost = postRepository.save(request.toEntity(user))
         val tagName = request.tagName
 
-        var savePost = postRepository.save(request.toEntity(user))
-
-        saveHashTags(tagName, savePost)
-
+        if (tagName.isNotBlank()) {
+            val tagList = savePost.hashTagList(tagName)
+            tagList.forEach { tag ->
+                if (hashTagRepository.findHashTagByTagName(tag)?.tagName == tag) {
+                    existHashTag(tag, savePost)
+                } else {
+                    createHashTag(tag, savePost)
+                }
+            }
+        }
         return PostsResponse.from(savePost)
     }
 
@@ -57,31 +64,27 @@ class PostServiceImpl(
         postRepository.delete(foundPost)
     }
 
-    private fun saveHashTags(tagName: String, savePost: Post): Post {
-        if (tagName.isNotBlank()) {
-            val tagList = savePost.hashTagList(tagName)
-            tagList.forEach { tag ->
-                if (hashTagRepository.findHashTagByTagName(tag)?.tagName == tag) {
-                    val saveHashTagId = hashTagRepository.findIdByTagName(tag)
-                    val savePostTag = postTagRepository.save<PostTag?>(
-                        PostTag(
-                            post = savePost,
-                            hashTag = saveHashTagId
-                        )
-                    )
-                    savePost.postTag.add(savePostTag)
-                } else {
-                    val saveHashTag = hashTagRepository.save(toHashTagEntity(tag))
-                    val savePostTag = postTagRepository.save<PostTag?>(
-                        PostTag(
-                            post = savePost,
-                            hashTag = saveHashTag
-                        )
-                    )
-                    savePost.postTag.add(savePostTag)
-                }
-            }
-        }
+    private fun existHashTag(tag: String, savePost: Post): Post {
+        val saveHashTagId = hashTagRepository.findIdByTagName(tag)
+        val savePostTag = postTagRepository.save<PostTag?>(
+            PostTag(
+                post = savePost,
+                hashTag = saveHashTagId
+            )
+        )
+        savePost.postTag.add(savePostTag)
+        return savePost
+    }
+
+    private fun createHashTag(tag: String, savePost: Post): Post {
+        val saveHashTag = hashTagRepository.save(toHashTagEntity(tag))
+        val savePostTag = postTagRepository.save<PostTag?>(
+            PostTag(
+                post = savePost,
+                hashTag = saveHashTag
+            )
+        )
+        savePost.postTag.add(savePostTag)
         return savePost
     }
 }
