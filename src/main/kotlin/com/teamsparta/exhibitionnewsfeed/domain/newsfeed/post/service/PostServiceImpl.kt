@@ -53,8 +53,20 @@ class PostServiceImpl(
     @Transactional
     override fun updatePost(postId: Long, request: UpdatePostRequest): PostResponse {
         val foundPost = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
+        val tagName = request.tagName
+
         foundPost.updatePostField(request)
 
+        if (tagName.isNotBlank()) {
+            val tagList = foundPost.hashTagList(tagName)
+            tagList.forEach { tag ->
+                if (hashTagRepository.findHashTagByTagName(tag)?.tagName == tag) {
+                    throw IllegalStateException("TagName: $tag already exists")
+                } else {
+                    createHashTag(tag, foundPost)
+                }
+            }
+        }
         return PostResponse.from(foundPost)
     }
 

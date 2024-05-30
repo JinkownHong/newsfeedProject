@@ -11,6 +11,7 @@ data class PostResponse(
     val createdAt: LocalDateTime?,
     val updateAt: LocalDateTime?,
     val user: UserResponse,
+    val postTag: List<PostTagResponse>,
     val comments: List<CommentResponse>
 ) {
     companion object {
@@ -21,7 +22,9 @@ data class PostResponse(
                 post.createdAt,
                 post.updatedAt,
                 post.user.toResponse(),
-                post.comments.map { CommentResponse.from(it) })
+                post.postTag.map { PostTagResponse.from(it) },
+                post.comments.map { CommentResponse.from(it) }
+            )
         }
     }
 }
