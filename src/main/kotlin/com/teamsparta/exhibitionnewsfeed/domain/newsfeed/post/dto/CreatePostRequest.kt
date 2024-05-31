@@ -21,7 +21,7 @@ fun CreatePostRequest.toEntity(user: User): Post {
     return Post(
         title = this.title,
         content = this.content,
-        users = user //TODO: 로그인 구현 후 다른방식으로 수정
+        users = user
     )
 }
 
