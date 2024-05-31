@@ -23,10 +23,16 @@ class PostController(
     }
 
     @GetMapping
-    fun getAllPosts(): ResponseEntity<List<PostsResponse>> {
+    fun getAllPosts(@RequestParam(required = false) tagName: String?): ResponseEntity<Any> {
+        val body = if (tagName != null) {
+            postService.getFilteredPosts(tagName)
+        } else {
+            postService.getAllPosts()
+        }
+
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(postService.getAllPosts())
+            .body(body)
     }
 
     @PostMapping

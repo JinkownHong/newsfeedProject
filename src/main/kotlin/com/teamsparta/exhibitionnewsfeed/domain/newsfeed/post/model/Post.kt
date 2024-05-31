@@ -22,7 +22,7 @@ class Post(
     @OneToMany(mappedBy = "post", cascade = [(CascadeType.ALL)])
     val comments: List<Comment> = emptyList(),
 
-    @OneToMany(mappedBy = "post", cascade = [(CascadeType.ALL)])
+    @OneToMany(mappedBy = "post", cascade = [(CascadeType.ALL)], orphanRemoval = true)
     var postTag: MutableList<PostTag> = mutableListOf(),
 ) : BaseTime() {
     @Id

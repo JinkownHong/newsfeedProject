@@ -14,6 +14,8 @@ data class CreatePostRequest(
     @field:NotBlank
     val content: String,
 
+    val userId: Long,
+
     val tagName: String
 )
 

@@ -30,6 +30,10 @@ class PostServiceImpl(
         return postRepository.findAllByOrderByCreatedAtDesc().map { PostsResponse.from(it) }
     }
 
+    override fun getFilteredPosts(tagName: String): List<PostsResponse> {
+        return postRepository.findById(tagName).map { PostsResponse.from(it) }
+    }
+
     @Transactional
     override fun createPost(request: CreatePostRequest): PostsResponse {
         // TODO: 로그인 구현 후 nickname 가져오는 방식 수정
