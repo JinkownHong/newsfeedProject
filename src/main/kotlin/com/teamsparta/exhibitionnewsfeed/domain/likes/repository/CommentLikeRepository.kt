@@ -1,7 +1,7 @@
-package com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.repository
+package com.teamsparta.exhibitionnewsfeed.domain.likes.repository
 
+import com.teamsparta.exhibitionnewsfeed.domain.likes.model.CommentLike
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.model.Comment
-import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.model.CommentLike
 import com.teamsparta.exhibitionnewsfeed.domain.user.model.User
 import org.springframework.data.jpa.repository.JpaRepository
 
