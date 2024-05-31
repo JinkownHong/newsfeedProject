@@ -1,8 +1,12 @@
 package com.teamsparta.exhibitionnewsfeed.domain.user.controller
 
-import com.teamsparta.exhibitionnewsfeed.auth.AuthUser
-import com.teamsparta.exhibitionnewsfeed.auth.RequestUser
-import com.teamsparta.exhibitionnewsfeed.domain.user.dto.*
+import com.teamsparta.exhibitionnewsfeed.domain.auth.AuthUser
+import com.teamsparta.exhibitionnewsfeed.domain.auth.RequestUser
+import com.teamsparta.exhibitionnewsfeed.domain.auth.TokenType
+import com.teamsparta.exhibitionnewsfeed.domain.user.dto.SignUpRequest
+import com.teamsparta.exhibitionnewsfeed.domain.user.dto.SignUpResponse
+import com.teamsparta.exhibitionnewsfeed.domain.user.dto.UpdateUserProfileRequest
+import com.teamsparta.exhibitionnewsfeed.domain.user.dto.UserProfileResponse
 import com.teamsparta.exhibitionnewsfeed.domain.user.service.UserService
 import com.teamsparta.exhibitionnewsfeed.exception.UnauthorizedException
 import io.swagger.v3.oas.annotations.Parameter
@@ -35,9 +39,9 @@ class UserController(
     fun verifyPassword(
         @PathVariable userId: Long,
         @RequestUser @Parameter(hidden = true) authUser: AuthUser,
-        @RequestBody request: Map<String, String>,
+        @RequestBody request: Map<String, String>
     ): ResponseEntity<Any> {
-        if (userId != authUser.id) throw UnauthorizedException("권한이 없습니다.")
+        checkAuth(userId, authUser)
         if (!userService.verifyPassword(userId, request["password"])) throw UnauthorizedException("비밀번호가 일치하지 않습니다.")
 
         //TODO 암호화된 검증 토큰 response에 넣기
@@ -50,9 +54,14 @@ class UserController(
         @RequestUser @Parameter(hidden = true) authUser: AuthUser,
         @RequestBody request: UpdateUserProfileRequest
     ): ResponseEntity<UserProfileResponse> {
-        if (userId != authUser.id) throw UnauthorizedException("권한이 없습니다.")
+        checkAuth(userId, authUser)
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(userService.updateProfile(userId, request))
+    }
+
+    private fun checkAuth(userId: Long, authUser: AuthUser) {
+        if (userId != authUser.id) throw UnauthorizedException("권한이 없습니다.")
+        if (authUser.tokenType != TokenType.ACCESS_TOKEN) throw UnauthorizedException("유효한 토큰이 아닙니다.")
     }
 }

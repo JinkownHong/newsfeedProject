@@ -1,7 +1,9 @@
 package com.teamsparta.exhibitionnewsfeed.domain.user.service
 
-import com.teamsparta.exhibitionnewsfeed.auth.JwtTokenProvider
-import com.teamsparta.exhibitionnewsfeed.domain.user.dto.*
+import com.teamsparta.exhibitionnewsfeed.domain.user.dto.SignUpRequest
+import com.teamsparta.exhibitionnewsfeed.domain.user.dto.SignUpResponse
+import com.teamsparta.exhibitionnewsfeed.domain.user.dto.UpdateUserProfileRequest
+import com.teamsparta.exhibitionnewsfeed.domain.user.dto.UserProfileResponse
 import com.teamsparta.exhibitionnewsfeed.domain.user.repository.UserRepository
 import com.teamsparta.exhibitionnewsfeed.exception.ModelNotFoundException
 import org.springframework.data.repository.findByIdOrNull
