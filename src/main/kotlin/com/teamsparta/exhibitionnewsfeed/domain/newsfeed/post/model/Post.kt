@@ -20,7 +20,10 @@ class Post(
     var users: User,
 
     @OneToMany(mappedBy = "post", cascade = [(CascadeType.ALL)])
-    val comments: List<Comment> = emptyList()
+    val comments: List<Comment> = emptyList(),
+
+    @OneToMany(mappedBy = "post", cascade = [(CascadeType.ALL)])
+    var postTag: MutableList<PostTag> = mutableListOf(),
 ) : BaseTime() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,5 +38,18 @@ class Post(
         if (users.id != request.userId) {
             throw ComparativeVerificationException(request.userId)
         }
+    }
+
+    fun hashTagList(hashTag: String): List<String> {
+        var tagList = mutableListOf<String>()
+        if ("^[\\sㄱ-ㅎ가-힣a-zA-Z0-9,]*$".toRegex().matches(hashTag)) {
+            hashTag.split(",").forEach {
+                val s = it.trim()
+                if (s.isNotBlank()) tagList.add(s)
+            }
+        } else {
+            return throw IllegalArgumentException("잘못된 형식의 태그입니다.(특수문자 불가, 구분자: 쉼표(,))")
+        }
+        return tagList
     }
 }

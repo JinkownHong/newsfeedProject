@@ -11,6 +11,7 @@ data class PostResponse(
     val createdAt: LocalDateTime?,
     val updateAt: LocalDateTime?,
     val user: UserResponse,
+    val postTag: List<PostTagResponse>,
     val comments: List<CommentResponse>,
     val likeCount: Int,
 ) {
@@ -22,6 +23,7 @@ data class PostResponse(
                 post.createdAt,
                 post.updatedAt,
                 post.users.toResponse(),
+                post.postTag.map { PostTagResponse.from(it) },
                 post.comments.map { CommentResponse.from(it) },
                 post.likes.size
             )

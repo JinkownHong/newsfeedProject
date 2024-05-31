@@ -1,26 +1,27 @@
 package com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto
 
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.model.Post
-import com.teamsparta.exhibitionnewsfeed.domain.user.dto.UserResponse
 import java.time.LocalDateTime
 
 data class PostsResponse(
     val id: Long,
     val title: String,
     val content: String,
-    val users: UserResponse,
+    val user: String,
     val createdAt: LocalDateTime?,
+    val postTag: List<PostTagResponse>,
     val likeCount: Int,
 ) {
     companion object {
-        fun Post.toResponse(): PostsResponse {
+        fun from(post: Post): PostsResponse {
             return PostsResponse(
-                id = id ?: throw IllegalStateException("ID cannot be Null"),
-                title = title,
-                content = content,
-                createdAt = createdAt,
-                users = users.toResponse(),
-                likeCount = likes.size
+                post.id ?: throw IllegalStateException("ID cannot be Null"),
+                post.title,
+                post.content,
+                post.users.toResponse().nickname,
+                post.createdAt,
+                post.postTag.map { PostTagResponse.from(it) },
+                post.likes.size
             )
         }
     }
