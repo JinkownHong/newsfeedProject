@@ -10,6 +10,7 @@ import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.repository.Comm
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.repository.PostRepository
 import com.teamsparta.exhibitionnewsfeed.domain.user.repository.UserRepository
 import com.teamsparta.exhibitionnewsfeed.exception.ModelNotFoundException
+import com.teamsparta.exhibitionnewsfeed.exception.UnauthorizedException
 import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -61,6 +62,7 @@ class LikeServiceImpl(
 
         val comment = commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("Comment", commentId)
         val user = userRepository.findByIdOrNull(userId) ?: throw ModelNotFoundException("User", userId)
+
         val isExistLike = commentLikeRepository.existsByCommentAndUser(comment, user)
         if (isExistLike) {
             throw IllegalStateException("Cannot add a like when it has already")
@@ -78,13 +80,17 @@ class LikeServiceImpl(
     override fun removeCommentLike(postId: Long, commentId: Long, userId: Long, likeId: Long) {
         validatePost(postId)
 
-        val comment = commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("Comment", commentId)
-        val user = userRepository.findByIdOrNull(userId) ?: throw ModelNotFoundException("User", userId)
-        val isExistLike = commentLikeRepository.existsByCommentAndUser(comment, user)
-        if (isExistLike.not()) {
-            throw IllegalStateException("Cannot remove a like when it has already")
-        }
+        commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("Comment", commentId)
+        userRepository.findByIdOrNull(userId) ?: throw ModelNotFoundException("User", userId)
+        val commentLike = commentLikeRepository.findByIdOrNull(likeId)
+            ?: throw IllegalStateException("Cannot remove a like when it has already")
+        if (userId != commentLike.user.id || commentId != commentLike.comment.id)
+            throw UnauthorizedException("You cannot remove this comment")
         commentLikeRepository.deleteById(likeId)
+    }
+
+    override fun getLikesCount(postId: Long, commentId: Long) {
+        TODO("Not yet implemented")
     }
 
     private fun validatePost(postId: Long) {

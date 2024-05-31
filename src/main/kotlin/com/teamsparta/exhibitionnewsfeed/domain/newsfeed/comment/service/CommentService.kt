@@ -9,5 +9,5 @@ interface CommentService {
 
     fun updateComment(postId: Long, commentId: Long, updateCommentRequest: UpdateCommentRequest): CommentResponse
 
-    fun deleteComment(postId: Long, commentId: Long): Unit
+    fun deleteComment(postId: Long, commentId: Long, userId: Long)
 }
