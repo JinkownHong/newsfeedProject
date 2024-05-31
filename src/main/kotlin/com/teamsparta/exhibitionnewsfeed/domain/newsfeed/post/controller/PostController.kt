@@ -28,10 +28,16 @@ class PostController(
     }
 
     @GetMapping
-    fun getAllPosts(): ResponseEntity<List<PostsResponse>> {
+    fun getAllPosts(@RequestParam(required = false) tagName: String?): ResponseEntity<Any> {
+        val body = if (tagName != null) {
+            postService.getFilteredPosts(tagName)
+        } else {
+            postService.getAllPosts()
+        }
+
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(postService.getAllPosts())
+            .body(body)
     }
 
     @PostMapping
@@ -76,4 +82,3 @@ class PostController(
         if (authUser.tokenType != TokenType.ACCESS_TOKEN) throw UnauthorizedException("유효한 토큰이 아닙니다.")
     }
 }
-

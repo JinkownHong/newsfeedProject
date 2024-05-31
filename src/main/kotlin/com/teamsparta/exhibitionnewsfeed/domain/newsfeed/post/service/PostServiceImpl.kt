@@ -31,6 +31,12 @@ class PostServiceImpl(
         return postRepository.findAllByOrderByCreatedAtDesc().map { PostsResponse.from(it) }
     }
 
+    override fun getFilteredPosts(tagName: String): List<PostsResponse> {
+        val post = postRepository.findById(tagName).map { PostsResponse.from(it) }
+
+        return post.sortedByDescending { post -> post.createdAt }
+    }
+
     @Transactional
     override fun createPost(authUser: AuthUser, request: CreatePostRequest): PostsResponse {
         val user = userRepository.findByIdOrNull(authUser.id) ?: throw ModelNotFoundException("User", authUser.id)
@@ -60,11 +66,7 @@ class PostServiceImpl(
         if (tagName.isNotBlank()) {
             val tagList = foundPost.hashTagList(tagName)
             tagList.forEach { tag ->
-                if (hashTagRepository.findHashTagByTagName(tag)?.tagName == tag) {
-                    throw IllegalStateException("TagName: $tag already exists")
-                } else {
-                    createHashTag(tag, foundPost)
-                }
+                if (hashTagRepository.findHashTagByTagName(tag)?.tagName != tag) createHashTag(tag, foundPost)
             }
         }
         return PostResponse.from(foundPost)

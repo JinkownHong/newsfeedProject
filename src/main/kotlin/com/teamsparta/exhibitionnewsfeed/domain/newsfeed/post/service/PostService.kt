@@ -13,4 +13,5 @@ interface PostService {
     fun createPost(authUser: AuthUser, request: CreatePostRequest): PostsResponse
     fun updatePost(postId: Long, request: UpdatePostRequest): PostResponse
     fun deletePost(postId: Long)
+    fun getFilteredPosts(tagName: String): List<PostsResponse>
 }
