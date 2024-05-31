@@ -15,7 +15,7 @@ class Post(
     @Column(name = "content")
     var content: String,
 
-    @Column(name = "content")
+    @Column(name = "heart_status")
     var heartStatus: Boolean = false,
 
     @ManyToOne @JoinColumn(name = "user_id")
@@ -40,14 +40,14 @@ class Post(
     }
 
     fun hashTagList(hashTag: String): List<String> {
-        var tagList = mutableListOf<String>()
+        val tagList = mutableListOf<String>()
         if ("^[\\sㄱ-ㅎ가-힣a-zA-Z0-9,]*$".toRegex().matches(hashTag)) {
             hashTag.split(",").forEach {
                 val s = it.trim()
                 if (s.isNotBlank()) tagList.add(s)
             }
         } else {
-            return throw IllegalArgumentException("잘못된 형식의 태그입니다.(특수문자 불가, 구분자: 쉼표(,))")
+            throw IllegalArgumentException("잘못된 형식의 태그입니다.(특수문자 불가, 구분자: 쉼표(,))")
         }
         return tagList
     }
