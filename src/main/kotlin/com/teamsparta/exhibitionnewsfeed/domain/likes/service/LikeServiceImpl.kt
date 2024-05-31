@@ -62,6 +62,9 @@ class LikeServiceImpl(
 
         val comment = commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("Comment", commentId)
         val user = userRepository.findByIdOrNull(userId) ?: throw ModelNotFoundException("User", userId)
+        if (comment.user.id == userId) {
+            throw IllegalStateException("You cannot like your own comment.")
+        }
 
         val isExistLike = commentLikeRepository.existsByCommentAndUser(comment, user)
         if (isExistLike) {

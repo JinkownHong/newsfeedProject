@@ -1,5 +1,6 @@
 package com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.service
 
+import com.teamsparta.exhibitionnewsfeed.domain.auth.AuthUser
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.dto.CommentResponse
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.dto.CreateCommentRequest
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.dto.UpdateCommentRequest
@@ -22,17 +23,17 @@ class CommentServiceImpl(
 ) : CommentService {
 
     @Transactional
-    override fun createComment(postId: Long, createCommentRequest: CreateCommentRequest): CommentResponse {
+    override fun createComment(postId: Long, authUser: AuthUser, request: CreateCommentRequest): CommentResponse {
         val post = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
         val user =
-            userRepository.findByIdOrNull(createCommentRequest.userId) ?: throw ModelNotFoundException(
+            userRepository.findByIdOrNull(authUser.id) ?: throw ModelNotFoundException(
                 "User",
-                createCommentRequest.userId
+                authUser.id
             )
 
 
         val comment = Comment(
-            content = createCommentRequest.content,
+            content = request.content,
             user = user,
             post = post
 
@@ -42,28 +43,26 @@ class CommentServiceImpl(
     }
 
     @Transactional
-    override fun updateComment(
-        postId: Long,
-        commentId: Long,
-        updateCommentRequest: UpdateCommentRequest
-    ): CommentResponse {
+    override fun updateComment(postId: Long, commentId: Long, request: UpdateCommentRequest): CommentResponse {
         postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
         val comment = commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("Comment", commentId)
-        if (comment.user.id != updateCommentRequest.userId)
+        if (comment.user.id != request.content)
             throw UnauthorizedException("권한이 없습니다.")
-        comment.content = updateCommentRequest.content
 
         return comment.toResponse()
     }
 
     @Transactional
-    override fun deleteComment(postId: Long, commentId: Long, userId: Long) {
+    override fun deleteComment(postId: Long, commentId: Long, authUser: AuthUser) {
         postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
         val comment = commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("Comment", commentId)
-        if (comment.user.id != userId)
+        if (comment.user.id != authUser.id)
             throw UnauthorizedException("권한이 없습니다.")
+
         commentRepository.delete(comment)
+
     }
+
 
 }
 
