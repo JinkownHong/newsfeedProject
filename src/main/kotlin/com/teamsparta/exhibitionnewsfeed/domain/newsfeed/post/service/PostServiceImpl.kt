@@ -31,7 +31,9 @@ class PostServiceImpl(
     }
 
     override fun getFilteredPosts(tagName: String): List<PostsResponse> {
-        return postRepository.findById(tagName).map { PostsResponse.from(it) }
+        val post = postRepository.findById(tagName).map { PostsResponse.from(it) }
+
+        return post.sortedByDescending { post -> post.createdAt }
     }
 
     @Transactional
