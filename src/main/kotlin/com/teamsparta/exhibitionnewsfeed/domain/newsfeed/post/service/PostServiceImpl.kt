@@ -1,5 +1,6 @@
 package com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.service
 
+import com.teamsparta.exhibitionnewsfeed.domain.auth.AuthUser
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.*
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.model.Post
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.model.PostTag
@@ -37,10 +38,9 @@ class PostServiceImpl(
     }
 
     @Transactional
-    override fun createPost(request: CreatePostRequest): PostsResponse {
-        // TODO: 로그인 구현 후 nickname 가져오는 방식 수정
-        val user = userRepository.findByIdOrNull(request.userId) ?: throw ModelNotFoundException("User", request.userId)
-        var savePost = postRepository.save(request.toEntity(user))
+    override fun createPost(authUser: AuthUser, request: CreatePostRequest): PostsResponse {
+        val user = userRepository.findByIdOrNull(authUser.id) ?: throw ModelNotFoundException("User", authUser.id)
+        val savePost = postRepository.save(request.toEntity(user))
         val tagName = request.tagName
 
         if (tagName.isNotBlank()) {
