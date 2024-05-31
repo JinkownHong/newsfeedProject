@@ -1,6 +1,6 @@
 package com.teamsparta.exhibitionnewsfeed.domain.likes.service
 
-import com.teamsparta.exhibitionnewsfeed.domain.likes.dto.PostLikeRequest
+import com.teamsparta.exhibitionnewsfeed.domain.auth.AuthUser
 import com.teamsparta.exhibitionnewsfeed.domain.likes.model.CommentLike
 import com.teamsparta.exhibitionnewsfeed.domain.likes.model.PostLike
 import com.teamsparta.exhibitionnewsfeed.domain.likes.repository.CommentLikeRepository
@@ -23,20 +23,19 @@ class LikeServiceImpl(
 ) : LikeService {
 
     @Transactional
-    override fun likePost(postId: Long, request: PostLikeRequest) {
+    override fun likePost(postId: Long, authUser: AuthUser) {
         val foundPost = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
         val foundUser =
-            userRepository.findByIdOrNull(request.userId) ?: throw ModelNotFoundException("User", request.userId)
+            userRepository.findByIdOrNull(authUser.id) ?: throw ModelNotFoundException("User", authUser.id)
 
-        /* if (foundPost.users.id == request.userId) {
+        if (foundPost.users.id == authUser.id) {
             throw RuntimeException("You cannot like your own comment")
-        } */
-
-        val alreadyLike = postLikeRepository.findByPostIdAndUserId(postId, request.userId)
-        if (alreadyLike != null) {
-            throw RuntimeException("이미 좋아요를 눌렀습니다.")
         }
-        // foundPost.likeCount += 1
+
+        val alreadyLike = postLikeRepository.findByPostIdAndUserId(postId, authUser.id)
+        if (alreadyLike != null) {
+            throw RuntimeException("Cannot add a like when it has already")
+        }
 
         val like = PostLike(post = foundPost, user = foundUser)
         postLikeRepository.save(like)
