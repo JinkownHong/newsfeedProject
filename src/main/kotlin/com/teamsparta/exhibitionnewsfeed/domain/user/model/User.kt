@@ -1,5 +1,6 @@
 package com.teamsparta.exhibitionnewsfeed.domain.user.model
 
+import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.model.BaseTime
 import com.teamsparta.exhibitionnewsfeed.domain.user.dto.UpdateUserProfileRequest
 import com.teamsparta.exhibitionnewsfeed.domain.user.dto.UserResponse
 import jakarta.persistence.*
@@ -19,7 +20,7 @@ class User(
 
     @Column(name = "description", nullable = true)
     var description: String?,
-) {
+) : BaseTime() {
     fun toResponse(): UserResponse {
         return UserResponse(
             id = this.id ?: throw IllegalStateException("User ID cannot be null"),

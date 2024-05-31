@@ -1,4 +1,4 @@
-package com.teamsparta.exhibitionnewsfeed.auth
+package com.teamsparta.exhibitionnewsfeed.domain.auth
 
 import com.teamsparta.exhibitionnewsfeed.domain.user.model.User
 import io.jsonwebtoken.ExpiredJwtException
@@ -19,15 +19,23 @@ class JwtTokenProvider {
 
     private val key: SecretKey = Keys.hmacShaKeyFor(SECRET_KEY.toByteArray(StandardCharsets.UTF_8))
 
-    fun generateToken(user: User): String {
+    fun generateAccessToken(user: User): String {
+        return generateToken(user, "accessToken", Duration.ofMinutes(10))
+    }
+
+    fun generateRefreshToken(user: User): String {
+        return generateToken(user, "refreshToken", Duration.ofDays(1))
+    }
+
+    private fun generateToken(user: User, subject: String, duration: Duration): String {
         val claims = Jwts.claims().add("userId", user.id).build()
         val now = Instant.now()
 
         return Jwts.builder()
-            .subject("accessToken")
+            .subject(subject)
             .issuer("team6.explorers")
             .issuedAt(Date.from(now))
-            .expiration(Date.from(now.plus(Duration.ofHours(3))))
+            .expiration(Date.from(now.plus(duration)))
             .claims(claims)
             .signWith(key)
             .compact()
@@ -44,10 +52,17 @@ class JwtTokenProvider {
         } catch (e: SignatureException) {
             throw IllegalArgumentException("Invalid Token")
         } catch (e: ExpiredJwtException) {
-            throw IllegalArgumentException("Expired Token")
+            throw IllegalArgumentException("Expired Token.")
         }
         return true
     }
+
+    fun getSubject(token: String): String = Jwts.parser()
+        .verifyWith(key)
+        .build()
+        .parseSignedClaims(token)
+        .payload
+        .subject
 
     fun getUserId(token: String): Long {
         val payload = Jwts.parser()

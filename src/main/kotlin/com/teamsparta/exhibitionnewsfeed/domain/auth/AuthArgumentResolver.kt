@@ -1,4 +1,4 @@
-package com.teamsparta.exhibitionnewsfeed.auth
+package com.teamsparta.exhibitionnewsfeed.domain.auth
 
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.core.MethodParameter
@@ -29,9 +29,17 @@ class AuthArgumentResolver(
         val request: HttpServletRequest =
             webRequest.getNativeRequest(HttpServletRequest::class.java) ?: throw IllegalArgumentException()
         val token = request.getHeader(HttpHeaders.AUTHORIZATION)?.replace("Bearer ", "")?.trim() ?: ""
+
         if (!jwtTokenProvider.validateToken(token)) {
             throw IllegalArgumentException("Invalid Token")
         }
-        return AuthUser(jwtTokenProvider.getUserId(token))
+
+        val tokenType = when (jwtTokenProvider.getSubject(token)) {
+            "accessToken" -> TokenType.ACCESS_TOKEN
+            "refreshToken" -> TokenType.REFRESH_TOKEN
+            else -> throw IllegalArgumentException("Token not found")
+        }
+
+        return AuthUser(id = jwtTokenProvider.getUserId(token), token = token, tokenType = tokenType)
     }
 }
