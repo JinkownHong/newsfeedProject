@@ -3,6 +3,7 @@ package com.teamsparta.exhibitionnewsfeed.domain.likes.controller
 import com.teamsparta.exhibitionnewsfeed.domain.auth.AuthUser
 import com.teamsparta.exhibitionnewsfeed.domain.auth.RequestUser
 import com.teamsparta.exhibitionnewsfeed.domain.auth.TokenType
+import com.teamsparta.exhibitionnewsfeed.domain.likes.dto.PostLikeResponse
 import com.teamsparta.exhibitionnewsfeed.domain.likes.service.LikeService
 import com.teamsparta.exhibitionnewsfeed.exception.UnauthorizedException
 import io.swagger.v3.oas.annotations.Parameter
@@ -42,6 +43,11 @@ class PostLikeController(
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)
             .build()
+    }
+
+    @GetMapping("/posts/{postId}")
+    fun getLikes(@PathVariable postId: Long): List<PostLikeResponse> {
+        return likeService.getLikesByPostId(postId)
     }
 
     private fun checkAuth(authUser: AuthUser) {
