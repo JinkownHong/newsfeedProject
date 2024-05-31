@@ -1,29 +1,29 @@
-package com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.controller
+package com.teamsparta.exhibitionnewsfeed.domain.likes.controller
 
-import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.dto.CommentLikeRequest
-import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.service.CommentLikeService
+import com.teamsparta.exhibitionnewsfeed.domain.likes.dto.CommentLikeRequest
+import com.teamsparta.exhibitionnewsfeed.domain.likes.service.LikeService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 
 @RestController
-@RequestMapping("/api/v1/posts/{postId}/comments/{commentId}")
+@RequestMapping("/api/v1/posts/{postId}/comments/{commentId}/likes")
 class CommentLikeController(
-    private val commentLikeService: CommentLikeService
+    private val likeService: LikeService
 
 ) {
-    @PostMapping("like")
+    @PostMapping()
     fun addLike(
         @PathVariable postId: Long,
         @PathVariable commentId: Long,
         @RequestBody commentLikeRequest: CommentLikeRequest
     ): ResponseEntity<Unit> {
-        commentLikeService.addLike(postId, commentId, commentLikeRequest.userId)
+        likeService.likeComment(postId, commentId, commentLikeRequest.userId)
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
-    @DeleteMapping("/like/{likeId}")
+    @DeleteMapping("/{likeId}")
     fun removeLike(
         @PathVariable postId: Long,
         @PathVariable commentId: Long,
@@ -31,7 +31,7 @@ class CommentLikeController(
         @RequestBody commentLikeRequest: CommentLikeRequest, // todo
         @RequestHeader("authorization") token: String
     ): ResponseEntity<Unit> {
-        commentLikeService.removeLike(postId, commentId, commentLikeRequest.userId, likeId)
+        likeService.removeCommentLike(postId, commentId, commentLikeRequest.userId, likeId)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }

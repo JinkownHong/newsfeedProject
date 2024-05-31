@@ -2,9 +2,11 @@ package com.teamsparta.exhibitionnewsfeed.domain.auth.controller
 
 import com.teamsparta.exhibitionnewsfeed.domain.auth.AuthUser
 import com.teamsparta.exhibitionnewsfeed.domain.auth.RequestUser
+import com.teamsparta.exhibitionnewsfeed.domain.auth.TokenType
 import com.teamsparta.exhibitionnewsfeed.domain.auth.service.AuthService
 import com.teamsparta.exhibitionnewsfeed.domain.user.dto.LoginRequest
 import com.teamsparta.exhibitionnewsfeed.domain.user.dto.LoginResponse
+import com.teamsparta.exhibitionnewsfeed.exception.UnauthorizedException
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -29,5 +31,14 @@ class AuthController(private val authService: AuthService) {
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(mapOf("accessToken" to authService.getNewAccessToken(authUser)))
+    }
+
+    @PostMapping("/logout")
+    fun logout(@RequestUser @Valid authUser: AuthUser): ResponseEntity<Void> {
+        if (authUser.tokenType != TokenType.REFRESH_TOKEN) throw UnauthorizedException("유효한 토큰이 아닙니다.")
+        authService.logout(authUser)
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .build()
     }
 }

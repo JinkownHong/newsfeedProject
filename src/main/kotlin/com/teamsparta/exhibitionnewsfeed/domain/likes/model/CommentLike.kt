@@ -1,5 +1,6 @@
-package com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.model
+package com.teamsparta.exhibitionnewsfeed.domain.likes.model
 
+import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.model.Comment
 import com.teamsparta.exhibitionnewsfeed.domain.user.model.User
 import jakarta.persistence.*
 
