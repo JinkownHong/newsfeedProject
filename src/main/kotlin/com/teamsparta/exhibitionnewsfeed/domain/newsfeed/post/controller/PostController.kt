@@ -1,10 +1,13 @@
 package com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.controller
 
+import com.teamsparta.exhibitionnewsfeed.domain.auth.AuthUser
+import com.teamsparta.exhibitionnewsfeed.domain.auth.RequestUser
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.CreatePostRequest
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.PostResponse
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.PostsResponse
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.UpdatePostRequest
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.service.PostService
+import io.swagger.v3.oas.annotations.Parameter
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -39,6 +42,7 @@ class PostController(
     @PutMapping("/{postId}")
     fun updatePost(
         @PathVariable postId: Long,
+        @RequestUser @Parameter(hidden = true) authUser: AuthUser,
         @Valid @RequestBody request: UpdatePostRequest
     ): ResponseEntity<PostResponse> {
         return ResponseEntity
@@ -47,7 +51,10 @@ class PostController(
     }
 
     @DeleteMapping("/{postId}")
-    fun deletePost(@PathVariable postId: Long): ResponseEntity<Unit> {
+    fun deletePost(
+        @PathVariable postId: Long,
+        @RequestUser @Parameter(hidden = true) authUser: AuthUser,
+    ): ResponseEntity<Unit> {
         postService.deletePost(postId)
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)

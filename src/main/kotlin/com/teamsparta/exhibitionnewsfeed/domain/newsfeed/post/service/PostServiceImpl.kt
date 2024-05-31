@@ -34,7 +34,7 @@ class PostServiceImpl(
     override fun createPost(request: CreatePostRequest): PostsResponse {
         // TODO: 로그인 구현 후 nickname 가져오는 방식 수정
         val user = userRepository.findByIdOrNull(1L) ?: throw ModelNotFoundException("User", 1)
-        var savePost = postRepository.save(request.toEntity(user))
+        val savePost = postRepository.save(request.toEntity(user))
         val tagName = request.tagName
 
         if (tagName.isNotBlank()) {
