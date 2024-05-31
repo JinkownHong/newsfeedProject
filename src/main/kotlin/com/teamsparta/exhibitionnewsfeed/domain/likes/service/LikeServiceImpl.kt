@@ -1,6 +1,7 @@
 package com.teamsparta.exhibitionnewsfeed.domain.likes.service
 
 import com.teamsparta.exhibitionnewsfeed.domain.auth.AuthUser
+import com.teamsparta.exhibitionnewsfeed.domain.likes.dto.PostLikeResponse
 import com.teamsparta.exhibitionnewsfeed.domain.likes.model.CommentLike
 import com.teamsparta.exhibitionnewsfeed.domain.likes.model.PostLike
 import com.teamsparta.exhibitionnewsfeed.domain.likes.repository.CommentLikeRepository
@@ -47,6 +48,11 @@ class LikeServiceImpl(
 
         val like = postLikeRepository.findByIdOrNull(likeId) ?: throw ModelNotFoundException("postLike", likeId)
         postLikeRepository.delete(like)
+    }
+
+    override fun getLikesByPostId(postId: Long): List<PostLikeResponse> {
+        val likes = postLikeRepository.findByPostId(postId)
+        return likes.map { like -> PostLikeResponse(nickname = like.user.nickname) }
     }
 
     @Transactional
