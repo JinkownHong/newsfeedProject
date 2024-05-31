@@ -1,4 +1,4 @@
-package com.teamsparta.exhibitionnewsfeed.auth
+package com.teamsparta.exhibitionnewsfeed.domain.auth
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)

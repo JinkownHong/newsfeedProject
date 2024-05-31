@@ -24,13 +24,6 @@ class UserController(
             .body(userService.signUp(request))
     }
 
-    @PostMapping("/login")
-    fun login(@RequestBody @Valid request: LoginRequest): ResponseEntity<LoginResponse> {
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(userService.login(request))
-    }
-
     @GetMapping("/profile/{userId}")
     fun getProfile(@PathVariable userId: Long): ResponseEntity<UserProfileResponse> {
         return ResponseEntity
