@@ -1,15 +1,16 @@
 package com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto
 
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.model.Post
-import com.teamsparta.exhibitionnewsfeed.domain.user.model.User
+import com.teamsparta.exhibitionnewsfeed.domain.user.dto.UserResponse
 import java.time.LocalDateTime
 
 data class PostsResponse(
     val id: Long,
     val title: String,
     val content: String,
-    val user: User,
+    val users: UserResponse,
     val createdAt: LocalDateTime?,
+    val likeCount: Int,
 ) {
     companion object {
         fun Post.toResponse(): PostsResponse {
@@ -18,7 +19,8 @@ data class PostsResponse(
                 title = title,
                 content = content,
                 createdAt = createdAt,
-                user = user,
+                users = users.toResponse(),
+                likeCount = likes.size
             )
         }
     }

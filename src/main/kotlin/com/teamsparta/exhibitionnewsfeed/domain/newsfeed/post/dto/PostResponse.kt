@@ -11,7 +11,8 @@ data class PostResponse(
     val createdAt: LocalDateTime?,
     val updateAt: LocalDateTime?,
     val user: UserResponse,
-    val comments: List<CommentResponse>
+    val comments: List<CommentResponse>,
+    val likeCount: Int,
 ) {
     companion object {
         fun from(post: Post): PostResponse {
@@ -20,8 +21,10 @@ data class PostResponse(
                 post.content,
                 post.createdAt,
                 post.updatedAt,
-                post.user.toResponse(),
-                post.comments.map { CommentResponse.from(it) })
+                post.users.toResponse(),
+                post.comments.map { CommentResponse.from(it) },
+                post.likes.size
+            )
         }
     }
 }
