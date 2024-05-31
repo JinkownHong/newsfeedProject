@@ -16,7 +16,7 @@ class Post(
     var content: String,
 
     @Column(name = "content")
-    var heartStatus: Boolean,
+    var heartStatus: Boolean = false,
 
     @ManyToOne @JoinColumn(name = "user_id")
     var users: User,
@@ -24,7 +24,7 @@ class Post(
     @OneToMany(mappedBy = "post", cascade = [(CascadeType.ALL)])
     val comments: List<Comment> = emptyList(),
 
-    @OneToMany(mappedBy = "post", cascade = [(CascadeType.ALL)])
+    @OneToMany(mappedBy = "post", cascade = [(CascadeType.ALL)], orphanRemoval = true)
     var postTag: MutableList<PostTag> = mutableListOf(),
 ) : BaseTime() {
     @Id

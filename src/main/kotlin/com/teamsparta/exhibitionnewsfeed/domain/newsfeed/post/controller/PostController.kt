@@ -21,20 +21,29 @@ class PostController(
     private val postService: PostService
 ) {
     @GetMapping("/{postId}")
-    fun getPost(@PathVariable postId: Long): ResponseEntity<PostResponse> {
+    fun getPost(
+        @PathVariable postId: Long,
+        @RequestUser @Parameter(hidden = true) authUser: AuthUser,
+    ): ResponseEntity<PostResponse> {
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(postService.getPostById(postId))
+            .body(postService.getPostById(postId, authUser))
     }
 
     @GetMapping
     fun getAllPosts(
         @RequestUser @Parameter(hidden = true) authUser: AuthUser,
-    ): ResponseEntity<List<PostsResponse>> {
-        checkAuth(authUser)
+        @RequestParam(required = false) tagName: String?
+    ): ResponseEntity<Any> {
+        val body = if (tagName != null) {
+            postService.getFilteredPosts(authUser, tagName)
+        } else {
+            postService.getAllPosts(authUser)
+        }
+
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(postService.getAllPosts(authUser))
+            .body(body)
     }
 
     @PostMapping

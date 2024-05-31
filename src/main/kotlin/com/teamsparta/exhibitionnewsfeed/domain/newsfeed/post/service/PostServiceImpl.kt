@@ -20,16 +20,32 @@ class PostServiceImpl(
     private val userRepository: UserRepository,
     private val hashTagRepository: HashTagRepository,
     private val postTagRepository: PostTagRepository,
-    private val postLikeRepository: PostLikeRepository
+    private val postLikeRepository: PostLikeRepository,
 ) : PostService {
 
-    override fun getPostById(postId: Long): PostResponse {
+    override fun getPostById(postId: Long, authUser: AuthUser): PostResponse {
         val foundPost = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
+
+        val like = postLikeRepository.findByPostIdAndUserId(foundPost.id!!, authUser.id)
+        foundPost.heartStatus = like != null
+
         return PostResponse.from(foundPost)
     }
 
     override fun getAllPosts(authUser: AuthUser): List<PostsResponse> {
-        return postRepository.findAllByOrderByCreatedAtDesc().map { PostsResponse.from(it) }
+        val posts = postRepository.findAllByOrderByCreatedAtDesc()
+
+        posts.forEach { post ->
+            val like = postLikeRepository.findByPostIdAndUserId(post.id!!, authUser.id)
+            post.heartStatus = like != null
+        }
+        return posts.map { PostsResponse.from(it) }
+    }
+
+    override fun getFilteredPosts(authUser: AuthUser, tagName: String): List<PostsResponse> {
+        val post = postRepository.findById(tagName).map { PostsResponse.from(it) }
+
+        return post.sortedByDescending { post -> post.createdAt }
     }
 
     @Transactional
@@ -61,11 +77,7 @@ class PostServiceImpl(
         if (tagName.isNotBlank()) {
             val tagList = foundPost.hashTagList(tagName)
             tagList.forEach { tag ->
-                if (hashTagRepository.findHashTagByTagName(tag)?.tagName == tag) {
-                    throw IllegalStateException("TagName: $tag already exists")
-                } else {
-                    createHashTag(tag, foundPost)
-                }
+                if (hashTagRepository.findHashTagByTagName(tag)?.tagName != tag) createHashTag(tag, foundPost)
             }
         }
         return PostResponse.from(foundPost)
