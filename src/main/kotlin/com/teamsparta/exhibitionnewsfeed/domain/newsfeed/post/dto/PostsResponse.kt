@@ -9,7 +9,8 @@ data class PostsResponse(
     val content: String,
     val user: String,
     val createdAt: LocalDateTime?,
-    val postTag: List<PostTagResponse>
+    val postTag: List<PostTagResponse>,
+    val likeCount: Int,
 ) {
     companion object {
         fun from(post: Post): PostsResponse {
@@ -17,9 +18,10 @@ data class PostsResponse(
                 post.id ?: throw IllegalStateException("ID cannot be Null"),
                 post.title,
                 post.content,
-                post.user.toResponse().nickname,
+                post.users.toResponse().nickname,
                 post.createdAt,
-                post.postTag.map { PostTagResponse.from(it) }
+                post.postTag.map { PostTagResponse.from(it) },
+                post.likes.size
             )
         }
     }

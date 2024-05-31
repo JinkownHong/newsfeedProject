@@ -37,7 +37,10 @@ class PostController(
     }
 
     @PutMapping("/{postId}")
-    fun updatePost(@PathVariable postId: Long, @RequestBody request: UpdatePostRequest): ResponseEntity<PostResponse> {
+    fun updatePost(
+        @PathVariable postId: Long,
+        @Valid @RequestBody request: UpdatePostRequest
+    ): ResponseEntity<PostResponse> {
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(postService.updatePost(postId, request))
@@ -50,6 +53,5 @@ class PostController(
             .status(HttpStatus.NO_CONTENT)
             .build()
     }
-
 }
 
