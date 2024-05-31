@@ -8,6 +8,7 @@ import java.time.LocalDateTime
 data class PostResponse(
     val title: String,
     val content: String,
+    val heartStatus: Boolean,
     val createdAt: LocalDateTime?,
     val updateAt: LocalDateTime?,
     val user: UserResponse,
@@ -20,6 +21,7 @@ data class PostResponse(
             return PostResponse(
                 post.title,
                 post.content,
+                post.heartStatus,
                 post.createdAt,
                 post.updatedAt,
                 post.users.toResponse(),

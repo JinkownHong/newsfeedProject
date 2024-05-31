@@ -21,18 +21,24 @@ class PostController(
     private val postService: PostService
 ) {
     @GetMapping("/{postId}")
-    fun getPost(@PathVariable postId: Long): ResponseEntity<PostResponse> {
+    fun getPost(
+        @PathVariable postId: Long,
+        @RequestUser @Parameter(hidden = true) authUser: AuthUser,
+    ): ResponseEntity<PostResponse> {
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(postService.getPostById(postId))
+            .body(postService.getPostById(postId, authUser))
     }
 
     @GetMapping
-    fun getAllPosts(@RequestParam(required = false) tagName: String?): ResponseEntity<Any> {
+    fun getAllPosts(
+        @RequestUser @Parameter(hidden = true) authUser: AuthUser,
+        @RequestParam(required = false) tagName: String?
+    ): ResponseEntity<Any> {
         val body = if (tagName != null) {
-            postService.getFilteredPosts(tagName)
+            postService.getFilteredPosts(authUser, tagName)
         } else {
-            postService.getAllPosts()
+            postService.getAllPosts(authUser)
         }
 
         return ResponseEntity
@@ -82,3 +88,4 @@ class PostController(
         if (authUser.tokenType != TokenType.ACCESS_TOKEN) throw UnauthorizedException("유효한 토큰이 아닙니다.")
     }
 }
+
