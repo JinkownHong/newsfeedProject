@@ -8,4 +8,5 @@ interface AuthService {
 
     fun login(request: LoginRequest): LoginResponse
     fun getNewAccessToken(authUser: AuthUser): String
+    fun logout(authUser: AuthUser)
 }
