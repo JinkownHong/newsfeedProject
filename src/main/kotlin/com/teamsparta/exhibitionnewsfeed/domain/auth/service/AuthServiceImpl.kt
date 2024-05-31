@@ -48,4 +48,10 @@ class AuthServiceImpl(
         if (!refreshTokenRepository.existsByRefreshToken(authUser.token)) throw UnauthorizedException("유효한 토큰이 아닙니다.")
         return jwtTokenProvider.generateAccessToken(user)
     }
+
+    override fun logout(authUser: AuthUser) {
+        val refreshToken =
+            refreshTokenRepository.findByIdOrNull(authUser.token) ?: throw UnauthorizedException("유효한 토큰이 아닙니다.")
+        refreshTokenRepository.delete(refreshToken)
+    }
 }
