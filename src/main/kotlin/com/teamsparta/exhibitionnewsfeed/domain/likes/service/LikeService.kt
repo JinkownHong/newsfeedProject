@@ -11,4 +11,5 @@ interface LikeService {
 
     fun likeComment(postId: Long, commentId: Long, userId: Long)
     fun removeCommentLike(postId: Long, commentId: Long, userId: Long, likeId: Long)
+    fun getLikesCount(postId: Long, commentId: Long)
 }

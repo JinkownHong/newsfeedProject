@@ -8,6 +8,7 @@ import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.comment.repository.Comm
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.repository.PostRepository
 import com.teamsparta.exhibitionnewsfeed.domain.user.repository.UserRepository
 import com.teamsparta.exhibitionnewsfeed.exception.ModelNotFoundException
+import com.teamsparta.exhibitionnewsfeed.exception.UnauthorizedException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -29,12 +30,14 @@ class CommentServiceImpl(
                 createCommentRequest.userId
             )
 
+
         val comment = Comment(
             content = createCommentRequest.content,
             user = user,
             post = post
-        )
 
+
+        )
         return commentRepository.save(comment).toResponse()
     }
 
@@ -46,17 +49,19 @@ class CommentServiceImpl(
     ): CommentResponse {
         postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
         val comment = commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("Comment", commentId)
-
+        if (comment.user.id != updateCommentRequest.userId)
+            throw UnauthorizedException("권한이 없습니다.")
         comment.content = updateCommentRequest.content
 
         return comment.toResponse()
     }
 
     @Transactional
-    override fun deleteComment(postId: Long, commentId: Long) {
+    override fun deleteComment(postId: Long, commentId: Long, userId: Long) {
         postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
         val comment = commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("Comment", commentId)
-
+        if (comment.user.id != userId)
+            throw UnauthorizedException("권한이 없습니다.")
         commentRepository.delete(comment)
     }
 
