@@ -1,6 +1,7 @@
 package com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.service
 
 import com.teamsparta.exhibitionnewsfeed.domain.auth.AuthUser
+import com.teamsparta.exhibitionnewsfeed.domain.likes.repository.PostLikeRepository
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.*
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.model.Post
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.model.PostTag
@@ -18,16 +19,16 @@ class PostServiceImpl(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository,
     private val hashTagRepository: HashTagRepository,
-    private val postTagRepository: PostTagRepository
+    private val postTagRepository: PostTagRepository,
+    private val postLikeRepository: PostLikeRepository
 ) : PostService {
 
     override fun getPostById(postId: Long): PostResponse {
         val foundPost = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
-
         return PostResponse.from(foundPost)
     }
 
-    override fun getAllPosts(): List<PostsResponse> {
+    override fun getAllPosts(authUser: AuthUser): List<PostsResponse> {
         return postRepository.findAllByOrderByCreatedAtDesc().map { PostsResponse.from(it) }
     }
 

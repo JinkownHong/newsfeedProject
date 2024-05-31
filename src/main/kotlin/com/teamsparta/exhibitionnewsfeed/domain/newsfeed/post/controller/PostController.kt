@@ -28,10 +28,13 @@ class PostController(
     }
 
     @GetMapping
-    fun getAllPosts(): ResponseEntity<List<PostsResponse>> {
+    fun getAllPosts(
+        @RequestUser @Parameter(hidden = true) authUser: AuthUser,
+    ): ResponseEntity<List<PostsResponse>> {
+        checkAuth(authUser)
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(postService.getAllPosts())
+            .body(postService.getAllPosts(authUser))
     }
 
     @PostMapping

@@ -15,6 +15,9 @@ class Post(
     @Column(name = "content")
     var content: String,
 
+    @Column(name = "content")
+    var heartStatus: Boolean,
+
     @ManyToOne @JoinColumn(name = "user_id")
     var users: User,
 
