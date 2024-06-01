@@ -44,9 +44,17 @@ class PostServiceImpl(
     }
 
     override fun getFilteredPosts(authUser: AuthUser, tagName: String): List<PostsResponse> {
-        val post = postRepository.findById(tagName).map { PostsResponse.from(it) }
+        val posts = postRepository.findByTagName(tagName)
 
-        return post.sortedByDescending { post -> post.createdAt }
+        val postIds = posts.mapNotNull { it.id }
+
+        val userLikes = postLikeRepository.findByPostIdInAndUserId(postIds, authUser.id)
+        val likedPostIds = userLikes.map { it.post.id }.toSet()
+
+        posts.forEach { post ->
+            post.heartStatus = likedPostIds.contains(post.id)
+        }
+        return posts.map { PostsResponse.from(it) }.sortedByDescending { it.createdAt }
     }
 
     @Transactional
