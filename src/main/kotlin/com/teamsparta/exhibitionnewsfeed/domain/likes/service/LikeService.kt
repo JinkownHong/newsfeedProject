@@ -7,7 +7,7 @@ interface LikeService {
     fun likePost(postId: Long, authUser: AuthUser)
     fun removePostLike(likeId: Long, postId: Long)
     fun getLikesByPostId(postId: Long): List<PostLikeResponse>
-
-    fun likeComment(postId: Long, commentId: Long, userId: Long)
-    fun removeCommentLike(postId: Long, commentId: Long, userId: Long, likeId: Long)
+  
+    fun likeComment(postId: Long, commentId: Long, authUser: AuthUser, userId: Long)
+    fun removeCommentLike(postId: Long, commentId: Long, likeId: Long, userId: Long)
 }

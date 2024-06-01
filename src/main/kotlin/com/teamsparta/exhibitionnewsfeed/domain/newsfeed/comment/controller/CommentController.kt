@@ -34,14 +34,14 @@ class CommentController(
     @PutMapping("/{commentId}")
     fun updateComment(
         @PathVariable postId: Long,
-        @RequestUser @Parameter(hidden = true) authUser: AuthUser,
         @PathVariable commentId: Long,
+        @RequestUser @Parameter(hidden = true) authUser: AuthUser,
         @RequestBody @Valid request: UpdateCommentRequest
     ): ResponseEntity<CommentResponse> {
         checkAccessToken(authUser)
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(commentService.updateComment(postId, commentId, request))
+            .body(commentService.updateComment(postId, commentId, authUser, request))
     }
 
     @DeleteMapping("/{commentId}")
