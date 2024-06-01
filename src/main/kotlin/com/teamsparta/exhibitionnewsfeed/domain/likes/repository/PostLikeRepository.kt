@@ -7,4 +7,6 @@ interface PostLikeRepository : JpaRepository<PostLike, Long> {
     fun findByPostIdAndUserId(postId: Long, userId: Long): PostLike?
 
     fun findByPostId(postId: Long): List<PostLike>
+
+    fun findByPostIdInAndUserId(postIds: List<Long>, userId: Long): List<PostLike>
 }

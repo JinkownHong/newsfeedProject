@@ -30,12 +30,12 @@ class LikeServiceImpl(
             userRepository.findByIdOrNull(authUser.id) ?: throw ModelNotFoundException("User", authUser.id)
 
         if (foundPost.users.id == authUser.id) {
-            throw RuntimeException("You cannot like your own comment")
+            throw IllegalArgumentException("You cannot like your own comment")
         }
 
         val alreadyLike = postLikeRepository.findByPostIdAndUserId(postId, authUser.id)
         if (alreadyLike != null) {
-            throw RuntimeException("Cannot add a like when it has already")
+            throw IllegalStateException("Cannot add a like when it has already")
         }
 
         val like = PostLike(post = foundPost, user = foundUser)
@@ -88,7 +88,6 @@ class LikeServiceImpl(
         val like = commentLikeRepository.findByIdOrNull(likeId) ?: throw ModelNotFoundException("CommentLike", likeId)
         commentLikeRepository.delete(like)
     }
-
     private fun validatePost(postId: Long) {
         postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
     }
