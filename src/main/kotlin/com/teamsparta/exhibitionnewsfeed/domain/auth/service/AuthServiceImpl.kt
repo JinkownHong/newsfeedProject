@@ -44,21 +44,25 @@ class AuthServiceImpl(
         return LoginResponse.from(user, accessToken, refreshToken)
     }
 
-    override fun getNewAccessToken(authUser: AuthUser): String {
-        if (authUser.tokenType != TokenType.REFRESH_TOKEN) throw IllegalArgumentException("REFRESH_TOKEN이 아닙니다.")
-        val userId = authUser.id
+    override fun getNewAccessToken(token: String): String {
+        if (!jwtTokenProvider.validateToken(token)) {
+            throw UnauthorizedException("Invalid Token")
+        }
+        if (jwtTokenProvider.getSubject(token) != TokenType.REFRESH_TOKEN.name) throw IllegalArgumentException("REFRESH_TOKEN이 아닙니다.")
+
+        val userId = jwtTokenProvider.getUserId(token)
+
         val user = userRepository.findByIdOrNull(userId) ?: throw ModelNotFoundException(
             "존재하지 않는 User. user id: $userId",
             userId
         )
-        if (!refreshTokenRepository.existsByRefreshToken(authUser.token)) throw UnauthorizedException("유효한 토큰이 아닙니다.")
+        if (!refreshTokenRepository.existsByRefreshToken(token)) throw UnauthorizedException("유효한 토큰이 아닙니다.")
         return jwtTokenProvider.generateAccessToken(user)
     }
 
+    @Transactional
     override fun logout(authUser: AuthUser) {
-        val refreshToken =
-            refreshTokenRepository.findByIdOrNull(authUser.token) ?: throw UnauthorizedException("유효한 토큰이 아닙니다.")
-        refreshTokenRepository.delete(refreshToken)
+        refreshTokenRepository.deleteByUserId(authUser.id)
     }
 
     override fun verifyPassword(userId: Long, password: String?): Boolean {

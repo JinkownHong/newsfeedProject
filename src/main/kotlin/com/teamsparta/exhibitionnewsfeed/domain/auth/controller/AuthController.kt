@@ -9,6 +9,7 @@ import com.teamsparta.exhibitionnewsfeed.domain.user.dto.LoginResponse
 import com.teamsparta.exhibitionnewsfeed.exception.UnauthorizedException
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.validation.Valid
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -24,15 +25,15 @@ class AuthController(private val authService: AuthService) {
     }
 
     @PostMapping("/new-token")
-    fun getNewAccessToken(@Parameter(hidden = true) @RequestUser authUser: AuthUser): ResponseEntity<Map<String, String>> {
+    fun getNewAccessToken(@RequestHeader header: HttpHeaders): ResponseEntity<Map<String, String>> {
+        val token = header.getOrEmpty("Authorization")[0]?.replace("Bearer ", "")?.trim() ?: ""
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(mapOf("accessToken" to authService.getNewAccessToken(authUser)))
+            .body(mapOf("accessToken" to authService.getNewAccessToken(token)))
     }
 
     @PostMapping("/logout")
     fun logout(@RequestUser @Valid authUser: AuthUser): ResponseEntity<Void> {
-        if (authUser.tokenType != TokenType.REFRESH_TOKEN) throw UnauthorizedException("유효한 토큰이 아닙니다.")
         authService.logout(authUser)
         return ResponseEntity
             .status(HttpStatus.OK)
