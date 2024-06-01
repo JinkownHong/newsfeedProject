@@ -68,7 +68,7 @@ class PostController(
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(postService.updatePost(postId, request))
+            .body(postService.updatePost(postId, authUser, request))
     }
 
     @DeleteMapping("/{postId}")
@@ -78,7 +78,7 @@ class PostController(
     ): ResponseEntity<Unit> {
         checkAuth(authUser)
 
-        postService.deletePost(postId)
+        postService.deletePost(postId, authUser)
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)
             .build()

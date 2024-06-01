@@ -47,14 +47,6 @@ class CommentLikeController(
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
-    @GetMapping("/count")
-    fun getLikesCount(
-        @PathVariable postId: Long,
-        @PathVariable commentId: Long,
-    ) {
-        return likeService.getLikesCount(postId, commentId)
-    }
-
     private fun checkAccessToken(authUser: AuthUser) {
         if (authUser.tokenType != TokenType.ACCESS_TOKEN) throw UnauthorizedException("유효한 토큰이 아닙니다.")
     }

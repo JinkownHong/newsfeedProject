@@ -10,6 +10,7 @@ import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.repository.PostRep
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.repository.PostTagRepository
 import com.teamsparta.exhibitionnewsfeed.domain.user.repository.UserRepository
 import com.teamsparta.exhibitionnewsfeed.exception.ModelNotFoundException
+import com.teamsparta.exhibitionnewsfeed.exception.UnauthorizedException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -43,9 +44,17 @@ class PostServiceImpl(
     }
 
     override fun getFilteredPosts(authUser: AuthUser, tagName: String): List<PostsResponse> {
-        val post = postRepository.findById(tagName).map { PostsResponse.from(it) }
+        val posts = postRepository.findByTagName(tagName)
 
-        return post.sortedByDescending { post -> post.createdAt }
+        val postIds = posts.mapNotNull { it.id }
+
+        val userLikes = postLikeRepository.findByPostIdInAndUserId(postIds, authUser.id)
+        val likedPostIds = userLikes.map { it.post.id }.toSet()
+
+        posts.forEach { post ->
+            post.heartStatus = likedPostIds.contains(post.id)
+        }
+        return posts.map { PostsResponse.from(it) }.sortedByDescending { it.createdAt }
     }
 
     @Transactional
@@ -68,11 +77,14 @@ class PostServiceImpl(
     }
 
     @Transactional
-    override fun updatePost(postId: Long, request: UpdatePostRequest): PostResponse {
+    override fun updatePost(postId: Long, authUser: AuthUser, request: UpdatePostRequest): PostResponse {
         val foundPost = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
         val tagName = request.tagName
 
         foundPost.updatePostField(request)
+
+        if (foundPost.users.id != authUser.id)
+            throw UnauthorizedException("권한이 없습니다.")
 
         if (tagName.isNotBlank()) {
             val tagList = foundPost.hashTagList(tagName)
@@ -84,8 +96,12 @@ class PostServiceImpl(
     }
 
     @Transactional
-    override fun deletePost(postId: Long) {
+    override fun deletePost(postId: Long, authUser: AuthUser) {
         val foundPost = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
+
+        if (foundPost.users.id != authUser.id)
+            throw UnauthorizedException("권한이 없습니다.")
+
         postRepository.delete(foundPost)
     }
 
