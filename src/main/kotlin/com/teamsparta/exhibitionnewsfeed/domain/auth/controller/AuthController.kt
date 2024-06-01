@@ -33,7 +33,7 @@ class AuthController(private val authService: AuthService) {
     }
 
     @PostMapping("/logout")
-    fun logout(@RequestUser @Valid authUser: AuthUser): ResponseEntity<Void> {
+    fun logout(@RequestUser @Parameter(hidden = true) authUser: AuthUser): ResponseEntity<Void> {
         authService.logout(authUser)
         return ResponseEntity
             .status(HttpStatus.OK)
