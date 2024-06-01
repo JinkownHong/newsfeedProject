@@ -23,13 +23,12 @@ class CommentController(
     fun createComment(
         @PathVariable postId: Long,
         @RequestUser @Parameter(hidden = true) authUser: AuthUser,
-        @RequestBody @Valid createCommentRequest: CreateCommentRequest
+        @RequestBody request: CreateCommentRequest
     ): ResponseEntity<CommentResponse> {
         checkAccessToken(authUser)
-        if (createCommentRequest.userId != authUser.id) throw UnauthorizedException("권한이 없습니다.")
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(commentService.createComment(postId, createCommentRequest))
+            .body(commentService.createComment(postId, authUser, request))
     }
 
     @PutMapping("/{commentId}")
@@ -37,13 +36,12 @@ class CommentController(
         @PathVariable postId: Long,
         @RequestUser @Parameter(hidden = true) authUser: AuthUser,
         @PathVariable commentId: Long,
-        @RequestBody @Valid updateCommentRequest: UpdateCommentRequest
+        @RequestBody @Valid request: UpdateCommentRequest
     ): ResponseEntity<CommentResponse> {
         checkAccessToken(authUser)
-        if (updateCommentRequest.userId != authUser.id) throw UnauthorizedException("권한이 없습니다.")
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(commentService.updateComment(postId, commentId, updateCommentRequest))
+            .body(commentService.updateComment(postId, commentId, request))
     }
 
     @DeleteMapping("/{commentId}")
@@ -53,7 +51,7 @@ class CommentController(
         @PathVariable commentId: Long
     ): ResponseEntity<Unit> {
         checkAccessToken(authUser)
-        commentService.deleteComment(postId, commentId, authUser.id)
+        commentService.deleteComment(postId, commentId, authUser)
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)
             .build()
