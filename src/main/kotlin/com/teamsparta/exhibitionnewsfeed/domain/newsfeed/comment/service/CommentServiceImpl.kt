@@ -37,7 +37,7 @@ class CommentServiceImpl(
             post = post
 
         )
-        return commentRepository.save(comment).toResponse()
+        return CommentResponse.from(commentRepository.save(comment))
     }
 
     @Transactional
@@ -53,7 +53,7 @@ class CommentServiceImpl(
         if (comment.user.id != authUser.id)
             throw UnauthorizedException("권한이 없습니다.")
 
-        return comment.toResponse()
+        return CommentResponse.from(comment)
     }
 
     @Transactional
