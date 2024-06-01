@@ -20,19 +20,19 @@ class JwtTokenProvider {
     private val key: SecretKey = Keys.hmacShaKeyFor(SECRET_KEY.toByteArray(StandardCharsets.UTF_8))
 
     fun generateAccessToken(user: User): String {
-        return generateToken(user, "accessToken", Duration.ofMinutes(10))
+        return generateToken(user, TokenType.ACCESS_TOKEN, Duration.ofMinutes(10))
     }
 
     fun generateRefreshToken(user: User): String {
-        return generateToken(user, "refreshToken", Duration.ofDays(1))
+        return generateToken(user, TokenType.REFRESH_TOKEN, Duration.ofDays(1))
     }
 
-    private fun generateToken(user: User, subject: String, duration: Duration): String {
+    private fun generateToken(user: User, subject: TokenType, duration: Duration): String {
         val claims = Jwts.claims().add("userId", user.id).build()
         val now = Instant.now()
 
         return Jwts.builder()
-            .subject(subject)
+            .subject(subject.name)
             .issuer("team6.explorers")
             .issuedAt(Date.from(now))
             .expiration(Date.from(now.plus(duration)))

@@ -7,6 +7,7 @@ import com.teamsparta.exhibitionnewsfeed.domain.user.dto.LoginResponse
 interface AuthService {
 
     fun login(request: LoginRequest): LoginResponse
-    fun getNewAccessToken(authUser: AuthUser): String
+    fun getNewAccessToken(token: String): String
     fun logout(authUser: AuthUser)
+    fun verifyPassword(userId: Long, password: String?): Boolean
 }
