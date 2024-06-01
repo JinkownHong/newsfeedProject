@@ -25,21 +25,14 @@ class AuthArgumentResolver(
         mavContainer: ModelAndViewContainer?,
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?
-    ): Any? {
+    ): AuthUser {
         val request: HttpServletRequest =
             webRequest.getNativeRequest(HttpServletRequest::class.java) ?: throw IllegalArgumentException()
         val token = request.getHeader(HttpHeaders.AUTHORIZATION)?.replace("Bearer ", "")?.trim() ?: ""
 
-        if (!jwtTokenProvider.validateToken(token)) {
-            throw IllegalArgumentException("Invalid Token")
-        }
+        if (!jwtTokenProvider.validateToken(token)) throw IllegalArgumentException("Invalid Token")
+        if (jwtTokenProvider.getSubject(token) != TokenType.ACCESS_TOKEN.name) throw IllegalArgumentException("ACCESS_TOKEN 아닙니다.")
 
-        val tokenType = when (jwtTokenProvider.getSubject(token)) {
-            "accessToken" -> TokenType.ACCESS_TOKEN
-            "refreshToken" -> TokenType.REFRESH_TOKEN
-            else -> throw IllegalArgumentException("Token not found")
-        }
-
-        return AuthUser(id = jwtTokenProvider.getUserId(token), token = token, tokenType = tokenType)
+        return AuthUser(id = jwtTokenProvider.getUserId(token), token = token)
     }
 }

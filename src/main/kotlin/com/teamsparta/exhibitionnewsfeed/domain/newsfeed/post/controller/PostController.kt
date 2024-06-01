@@ -2,13 +2,11 @@ package com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.controller
 
 import com.teamsparta.exhibitionnewsfeed.domain.auth.AuthUser
 import com.teamsparta.exhibitionnewsfeed.domain.auth.RequestUser
-import com.teamsparta.exhibitionnewsfeed.domain.auth.TokenType
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.CreatePostRequest
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.PostResponse
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.PostsResponse
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.dto.UpdatePostRequest
 import com.teamsparta.exhibitionnewsfeed.domain.newsfeed.post.service.PostService
-import com.teamsparta.exhibitionnewsfeed.exception.UnauthorizedException
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -51,8 +49,6 @@ class PostController(
         @RequestUser @Parameter(hidden = true) authUser: AuthUser,
         @Valid @RequestBody request: CreatePostRequest
     ): ResponseEntity<PostsResponse> {
-        checkAuth(authUser)
-
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(postService.createPost(authUser, request))
@@ -64,8 +60,6 @@ class PostController(
         @RequestUser @Parameter(hidden = true) authUser: AuthUser,
         @Valid @RequestBody request: UpdatePostRequest
     ): ResponseEntity<PostResponse> {
-        checkAuth(authUser)
-
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(postService.updatePost(postId, authUser, request))
@@ -76,16 +70,10 @@ class PostController(
         @PathVariable postId: Long,
         @RequestUser @Parameter(hidden = true) authUser: AuthUser,
     ): ResponseEntity<Unit> {
-        checkAuth(authUser)
-
         postService.deletePost(postId, authUser)
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)
             .build()
-    }
-
-    private fun checkAuth(authUser: AuthUser) {
-        if (authUser.tokenType != TokenType.ACCESS_TOKEN) throw UnauthorizedException("유효한 토큰이 아닙니다.")
     }
 }
 

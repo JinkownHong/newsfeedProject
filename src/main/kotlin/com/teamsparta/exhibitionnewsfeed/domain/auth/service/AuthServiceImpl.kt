@@ -54,4 +54,10 @@ class AuthServiceImpl(
             refreshTokenRepository.findByIdOrNull(authUser.token) ?: throw UnauthorizedException("유효한 토큰이 아닙니다.")
         refreshTokenRepository.delete(refreshToken)
     }
+
+    override fun verifyPassword(userId: Long, password: String?): Boolean {
+        val user =
+            userRepository.findByIdOrNull(userId) ?: throw ModelNotFoundException("User id $userId not found.", userId)
+        return user.isValidPassword(password ?: "", passwordEncoder)
+    }
 }

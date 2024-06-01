@@ -41,4 +41,17 @@ class AuthController(private val authService: AuthService) {
             .status(HttpStatus.OK)
             .build()
     }
+
+    @PostMapping("/{userId}")
+    fun verifyPassword(
+        @PathVariable userId: Long,
+        @RequestUser @Parameter(hidden = true) authUser: AuthUser,
+        @RequestBody request: UserPassword
+    ): ResponseEntity<Unit> {
+        if (userId != authUser.id) throw UnauthorizedException("권한이 없습니다.")
+        if (!authService.verifyPassword(userId, request.password)) throw UnauthorizedException("비밀번호가 일치하지 않습니다.")
+
+        //TODO 암호화된 검증 토큰 response에 넣기
+        return ResponseEntity.status(HttpStatus.OK).build()
+    }
 }

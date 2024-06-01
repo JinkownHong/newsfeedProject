@@ -8,6 +8,5 @@ import com.teamsparta.exhibitionnewsfeed.domain.user.dto.UserProfileResponse
 interface UserService {
     fun signUp(request: SignUpRequest): SignUpResponse
     fun getProfile(userId: Long): UserProfileResponse
-    fun verifyPassword(userId: Long, password: String?): Boolean
     fun updateProfile(userId: Long, request: UpdateUserProfileRequest): UserProfileResponse
 }
