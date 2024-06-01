@@ -2,7 +2,7 @@ package com.teamsparta.exhibitionnewsfeed.domain.auth.controller
 
 import com.teamsparta.exhibitionnewsfeed.domain.auth.AuthUser
 import com.teamsparta.exhibitionnewsfeed.domain.auth.RequestUser
-import com.teamsparta.exhibitionnewsfeed.domain.auth.TokenType
+import com.teamsparta.exhibitionnewsfeed.domain.auth.dto.UserPassword
 import com.teamsparta.exhibitionnewsfeed.domain.auth.service.AuthService
 import com.teamsparta.exhibitionnewsfeed.domain.user.dto.LoginRequest
 import com.teamsparta.exhibitionnewsfeed.domain.user.dto.LoginResponse
@@ -11,10 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/api/v1/auth")
 @RestController

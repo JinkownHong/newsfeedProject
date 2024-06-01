@@ -13,6 +13,7 @@ import com.teamsparta.exhibitionnewsfeed.exception.UnauthorizedException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class AuthServiceImpl(
@@ -22,6 +23,7 @@ class AuthServiceImpl(
     private val passwordEncoder: PasswordEncoder,
 ) : AuthService {
 
+    @Transactional
     override fun login(request: LoginRequest): LoginResponse {
         val user = userRepository.findByEmail(request.email) ?: throw IllegalArgumentException("잘못된 Email/PW 입니다.")
         if (!user.isValidPassword(
@@ -33,8 +35,12 @@ class AuthServiceImpl(
         val refreshToken = jwtTokenProvider.generateRefreshToken(user)
         val accessToken = jwtTokenProvider.generateAccessToken(user)
 
-        refreshTokenRepository.save(RefreshToken(refreshToken))
-
+        refreshTokenRepository.save(
+            RefreshToken(
+                refreshToken,
+                user.id ?: throw IllegalStateException("User Id must be not null")
+            )
+        )
         return LoginResponse.from(user, accessToken, refreshToken)
     }
 
