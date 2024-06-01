@@ -4,6 +4,6 @@ import jakarta.validation.constraints.NotBlank
 
 data class UpdateCommentRequest(
     @field:NotBlank
-    val content: Long,
+    val content: String,
 
     )

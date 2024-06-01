@@ -31,22 +31,26 @@ class CommentServiceImpl(
                 authUser.id
             )
 
-
         val comment = Comment(
             content = request.content,
             user = user,
             post = post
-
 
         )
         return commentRepository.save(comment).toResponse()
     }
 
     @Transactional
-    override fun updateComment(postId: Long, commentId: Long, request: UpdateCommentRequest): CommentResponse {
+    override fun updateComment(
+        postId: Long,
+        commentId: Long,
+        authUser: AuthUser,
+        request: UpdateCommentRequest
+    ): CommentResponse {
         postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
         val comment = commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("Comment", commentId)
-        if (comment.user.id != request.content)
+
+        if (comment.user.id != authUser.id)
             throw UnauthorizedException("권한이 없습니다.")
 
         return comment.toResponse()
@@ -56,14 +60,12 @@ class CommentServiceImpl(
     override fun deleteComment(postId: Long, commentId: Long, authUser: AuthUser) {
         postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
         val comment = commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("Comment", commentId)
+
         if (comment.user.id != authUser.id)
             throw UnauthorizedException("권한이 없습니다.")
 
         commentRepository.delete(comment)
-
     }
-
-
 }
 
 

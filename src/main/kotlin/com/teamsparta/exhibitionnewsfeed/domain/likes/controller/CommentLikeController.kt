@@ -28,7 +28,7 @@ class CommentLikeController(
         checkAccessToken(authUser)
         if (authUser.id != commentLikeRequest.userId)
             throw UnauthorizedException("You are not allowed to use this comment like")
-        likeService.likeComment(postId, commentId, commentLikeRequest.userId)
+        likeService.likeComment(postId, commentId, authUser, commentLikeRequest.userId)
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
@@ -43,16 +43,8 @@ class CommentLikeController(
         checkAccessToken(authUser)
         if (authUser.id != commentLikeRequest.userId)
             throw UnauthorizedException("You are not allowed to use this comment like")
-        likeService.removeCommentLike(postId, commentId, commentLikeRequest.userId, likeId)
+        likeService.removeCommentLike(postId, commentId, likeId, commentLikeRequest.userId)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
-    }
-
-    @GetMapping("/count")
-    fun getLikesCount(
-        @PathVariable postId: Long,
-        @PathVariable commentId: Long,
-    ) {
-        return likeService.getLikesCount(postId, commentId)
     }
 
     private fun checkAccessToken(authUser: AuthUser) {
