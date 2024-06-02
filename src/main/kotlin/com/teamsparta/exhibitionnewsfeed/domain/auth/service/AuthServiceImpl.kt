@@ -40,13 +40,16 @@ class AuthServiceImpl(
             )
         ) throw IllegalArgumentException("잘못된 Email/PW 입니다.")
 
+        val userId = user.id ?: throw IllegalStateException("User id must be not null")
+        refreshTokenRepository.deleteByUserId(userId)
+
         val refreshToken = jwtTokenProvider.generateRefreshToken(user)
         val accessToken = jwtTokenProvider.generateAccessToken(user)
 
         refreshTokenRepository.save(
             RefreshToken(
                 refreshToken,
-                user.id ?: throw IllegalStateException("User Id must be not null")
+                userId
             )
         )
         return LoginResponse.from(user, accessToken, refreshToken)
