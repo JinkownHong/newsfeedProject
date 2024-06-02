@@ -1,0 +1,24 @@
+### post 좋아요
+POST http://localhost:8080/api/v1/likes/posts/{postId}
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+### post 좋아요 누른 유저
+GET http://localhost:8080/api/v1/likes/posts/{postId}
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+### post 좋아요 삭제
+DELETE http://localhost:8080/api/v1/likes/{likeId}/posts/{postId}
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+### comment 좋아요
+POST http://localhost:8080/api/v1/posts/{postId}/comments/{commentId}/likes
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+### comment 좋아요 삭제
+DELETE http://localhost:8080/api/v1/posts/{postId}/comments/{commentId}/likes/{likeId}
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json

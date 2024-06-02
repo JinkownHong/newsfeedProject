@@ -53,6 +53,8 @@ class CommentServiceImpl(
         if (comment.user.id != authUser.id)
             throw UnauthorizedException("권한이 없습니다.")
 
+        comment.content = request.content
+
         return CommentResponse.from(comment)
     }
 
