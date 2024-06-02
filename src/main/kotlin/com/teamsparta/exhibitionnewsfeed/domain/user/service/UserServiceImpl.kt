@@ -1,7 +1,5 @@
 package com.teamsparta.exhibitionnewsfeed.domain.user.service
 
-import com.teamsparta.exhibitionnewsfeed.domain.user.dto.SignUpRequest
-import com.teamsparta.exhibitionnewsfeed.domain.user.dto.SignUpResponse
 import com.teamsparta.exhibitionnewsfeed.domain.user.dto.UpdateUserProfileRequest
 import com.teamsparta.exhibitionnewsfeed.domain.user.dto.UserProfileResponse
 import com.teamsparta.exhibitionnewsfeed.domain.user.repository.UserRepository
@@ -16,12 +14,6 @@ class UserServiceImpl(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
 ) : UserService {
-
-    @Transactional
-    override fun signUp(request: SignUpRequest): SignUpResponse {
-        if (userRepository.existsByEmail(request.email)) throw IllegalStateException("User already exists")
-        return SignUpResponse.from(userRepository.save(request.toEntity(passwordEncoder)))
-    }
 
     override fun getProfile(userId: Long): UserProfileResponse {
         val user = userRepository.findByIdOrNull(userId)

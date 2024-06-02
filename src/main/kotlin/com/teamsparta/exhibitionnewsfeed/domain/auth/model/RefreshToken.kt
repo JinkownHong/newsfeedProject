@@ -9,6 +9,6 @@ class RefreshToken(
     @Id
     val refreshToken: String,
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     val userId: Long
 )

@@ -1,5 +1,6 @@
-package com.teamsparta.exhibitionnewsfeed.domain.user.dto
+package com.teamsparta.exhibitionnewsfeed.domain.auth.dto
 
+import com.teamsparta.exhibitionnewsfeed.domain.user.dto.UserResponse
 import com.teamsparta.exhibitionnewsfeed.domain.user.model.User
 
 data class LoginResponse(

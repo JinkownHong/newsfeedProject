@@ -2,14 +2,11 @@ package com.teamsparta.exhibitionnewsfeed.domain.user.controller
 
 import com.teamsparta.exhibitionnewsfeed.domain.auth.AuthUser
 import com.teamsparta.exhibitionnewsfeed.domain.auth.RequestUser
-import com.teamsparta.exhibitionnewsfeed.domain.user.dto.SignUpRequest
-import com.teamsparta.exhibitionnewsfeed.domain.user.dto.SignUpResponse
 import com.teamsparta.exhibitionnewsfeed.domain.user.dto.UpdateUserProfileRequest
 import com.teamsparta.exhibitionnewsfeed.domain.user.dto.UserProfileResponse
 import com.teamsparta.exhibitionnewsfeed.domain.user.service.UserService
 import com.teamsparta.exhibitionnewsfeed.exception.UnauthorizedException
 import io.swagger.v3.oas.annotations.Parameter
-import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -19,13 +16,6 @@ import org.springframework.web.bind.annotation.*
 class UserController(
     private val userService: UserService
 ) {
-    @PostMapping("/sign-up")
-    fun signUp(@RequestBody @Valid request: SignUpRequest): ResponseEntity<SignUpResponse> {
-        return ResponseEntity
-            .status(HttpStatus.CREATED)
-            .body(userService.signUp(request))
-    }
-
     @GetMapping("/profile/{userId}")
     fun getProfile(@PathVariable userId: Long): ResponseEntity<UserProfileResponse> {
         return ResponseEntity

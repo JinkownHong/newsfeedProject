@@ -3,10 +3,12 @@ package com.teamsparta.exhibitionnewsfeed.domain.auth.service
 import com.teamsparta.exhibitionnewsfeed.domain.auth.AuthUser
 import com.teamsparta.exhibitionnewsfeed.domain.auth.JwtTokenProvider
 import com.teamsparta.exhibitionnewsfeed.domain.auth.TokenType
+import com.teamsparta.exhibitionnewsfeed.domain.auth.dto.LoginRequest
+import com.teamsparta.exhibitionnewsfeed.domain.auth.dto.LoginResponse
+import com.teamsparta.exhibitionnewsfeed.domain.auth.dto.SignUpRequest
+import com.teamsparta.exhibitionnewsfeed.domain.auth.dto.SignUpResponse
 import com.teamsparta.exhibitionnewsfeed.domain.auth.model.RefreshToken
 import com.teamsparta.exhibitionnewsfeed.domain.auth.repository.RefreshTokenRepository
-import com.teamsparta.exhibitionnewsfeed.domain.user.dto.LoginRequest
-import com.teamsparta.exhibitionnewsfeed.domain.user.dto.LoginResponse
 import com.teamsparta.exhibitionnewsfeed.domain.user.repository.UserRepository
 import com.teamsparta.exhibitionnewsfeed.exception.ModelNotFoundException
 import com.teamsparta.exhibitionnewsfeed.exception.UnauthorizedException
@@ -24,6 +26,12 @@ class AuthServiceImpl(
 ) : AuthService {
 
     @Transactional
+    override fun signUp(request: SignUpRequest): SignUpResponse {
+        if (userRepository.existsByEmail(request.email)) throw IllegalStateException("이미 존재하는 회원입니다.")
+        return SignUpResponse.from(userRepository.save(request.toEntity(passwordEncoder)))
+    }
+
+    @Transactional
     override fun login(request: LoginRequest): LoginResponse {
         val user = userRepository.findByEmail(request.email) ?: throw IllegalArgumentException("잘못된 Email/PW 입니다.")
         if (!user.isValidPassword(
@@ -32,13 +40,16 @@ class AuthServiceImpl(
             )
         ) throw IllegalArgumentException("잘못된 Email/PW 입니다.")
 
+        val userId = user.id ?: throw IllegalStateException("User id must be not null")
+        refreshTokenRepository.deleteByUserId(userId)
+
         val refreshToken = jwtTokenProvider.generateRefreshToken(user)
         val accessToken = jwtTokenProvider.generateAccessToken(user)
 
         refreshTokenRepository.save(
             RefreshToken(
                 refreshToken,
-                user.id ?: throw IllegalStateException("User Id must be not null")
+                userId
             )
         )
         return LoginResponse.from(user, accessToken, refreshToken)

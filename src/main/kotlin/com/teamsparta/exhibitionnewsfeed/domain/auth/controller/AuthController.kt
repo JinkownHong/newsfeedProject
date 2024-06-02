@@ -2,10 +2,8 @@ package com.teamsparta.exhibitionnewsfeed.domain.auth.controller
 
 import com.teamsparta.exhibitionnewsfeed.domain.auth.AuthUser
 import com.teamsparta.exhibitionnewsfeed.domain.auth.RequestUser
-import com.teamsparta.exhibitionnewsfeed.domain.auth.dto.UserPassword
+import com.teamsparta.exhibitionnewsfeed.domain.auth.dto.*
 import com.teamsparta.exhibitionnewsfeed.domain.auth.service.AuthService
-import com.teamsparta.exhibitionnewsfeed.domain.user.dto.LoginRequest
-import com.teamsparta.exhibitionnewsfeed.domain.user.dto.LoginResponse
 import com.teamsparta.exhibitionnewsfeed.exception.UnauthorizedException
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.validation.Valid
@@ -17,6 +15,14 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/v1/auth")
 @RestController
 class AuthController(private val authService: AuthService) {
+
+    @PostMapping("/sign-up")
+    fun signUp(@RequestBody @Valid request: SignUpRequest): ResponseEntity<SignUpResponse> {
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(authService.signUp(request))
+    }
+
     @PostMapping("/login")
     fun login(@RequestBody @Valid request: LoginRequest): ResponseEntity<LoginResponse> {
         return ResponseEntity
@@ -33,7 +39,7 @@ class AuthController(private val authService: AuthService) {
     }
 
     @PostMapping("/logout")
-    fun logout(@RequestUser @Valid authUser: AuthUser): ResponseEntity<Void> {
+    fun logout(@RequestUser @Parameter(hidden = true) authUser: AuthUser): ResponseEntity<Void> {
         authService.logout(authUser)
         return ResponseEntity
             .status(HttpStatus.OK)
