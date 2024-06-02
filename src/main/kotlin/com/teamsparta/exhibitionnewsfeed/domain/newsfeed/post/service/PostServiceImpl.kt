@@ -27,8 +27,10 @@ class PostServiceImpl(
     override fun getPostById(postId: Long, authUser: AuthUser): PostResponse {
         val foundPost = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
 
-        val like = postLikeRepository.findByPostIdAndUserId(foundPost.id!!, authUser.id)
-        foundPost.heartStatus = like != null
+        foundPost.id?.let { postId ->
+            val like = postLikeRepository.findByPostIdAndUserId(postId, authUser.id)
+            foundPost.heartStatus = like != null
+        } ?: throw IllegalStateException("Post ID should not be null")
 
         return PostResponse.from(foundPost)
     }
@@ -37,8 +39,10 @@ class PostServiceImpl(
         val posts = postRepository.findAllByOrderByCreatedAtDesc()
 
         posts.forEach { post ->
-            val like = postLikeRepository.findByPostIdAndUserId(post.id!!, authUser.id)
-            post.heartStatus = like != null
+            post.id?.let { postId ->
+                val like = postLikeRepository.findByPostIdAndUserId(postId, authUser.id)
+                post.heartStatus = like != null
+            } ?: throw IllegalStateException("Post ID should not be null")
         }
         return posts.map { PostsResponse.from(it) }
     }
