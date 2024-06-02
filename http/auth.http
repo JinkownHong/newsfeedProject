@@ -1,0 +1,40 @@
+### 회원가입
+POST http://localhost:8080/api/v1/auth/sign-up
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "string",
+  "nickname": "string",
+  "description": "string"
+}
+
+### 로그인
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "string"
+}
+
+> {%
+    client.global.set("userId", response.body["user"]["id"])
+    client.global.set("ACCESS_TOKEN", response.body["accessToken"])
+    client.global.set("REFRESH_TOKEN", response.body["refreshToken"])
+%}
+
+### AccessToken 재발급
+POST http://localhost:8080/api/v1/auth/new-token
+Authorization: Bearer {{REFRESH_TOKEN}}
+
+> {%
+    client.global.set("ACCESS_TOKEN", response.body["accessToken"])
+%}
+
+### User 비밀번호 검증
+POST http://localhost:8080/api/v1/auth/{{userId}}
+
+### 로그아웃
+POST http://localhost:8080/api/v1/auth/logout
+Authorization: Bearer {{ACCESS_TOKEN}}
