@@ -1,0 +1,20 @@
+### post 좋아요
+POST http://localhost:8080/api/v1/likes/posts/{{postId}}
+
+
+### post 좋아요 개수
+GET http://localhost:8080/api/v1/likes/posts/{{postId}}
+
+
+### post 좋아요 삭제
+DELETE http://localhost:8080/api/v1/likes/{{likeId}}/posts/{{postId}}
+
+
+### comment 좋아요
+POST http://localhost:8080/api/v1/posts/{{postId}}/comments/{{commentId}}/likes
+
+
+### comment 좋아요 삭제
+DELETE http://localhost:8080/api/v1/posts/{{postId}}/comments/{{commentId}}/likes/{{likeId}}
+
+

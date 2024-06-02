@@ -1,0 +1,22 @@
+### comment 작성
+POST http://localhost:8080/api/v1/posts/{postId}/comments
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+{
+  "content": "string"
+}
+
+### comment 수정
+PUT http://localhost:8080/api/v1/posts/{postId}/comments/{commentId}
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+{
+  "content": "string"
+}
+
+### comment 삭제
+DELETE http://localhost:8080/api/v1/posts/{postId}/comments/{commentId}
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
