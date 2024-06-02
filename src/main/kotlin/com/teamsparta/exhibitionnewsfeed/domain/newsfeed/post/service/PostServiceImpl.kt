@@ -94,6 +94,7 @@ class PostServiceImpl(
             val tagList = foundPost.hashTagList(tagName)
             tagList.forEach { tag ->
                 if (hashTagRepository.findHashTagByTagName(tag)?.tagName != tag) createHashTag(tag, foundPost)
+                else existHashTag(tag, foundPost)
             }
         }
         return PostResponse.from(foundPost)
