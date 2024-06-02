@@ -13,7 +13,7 @@ Authorization: Bearer {{ACCESS_TOKEN}}
 Content-Type: application/json
 
 {
-  "content": "string"
+  "content": "changed"
 }
 
 ### comment 삭제

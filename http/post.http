@@ -10,13 +10,13 @@ Content-Type: application/json
 }
 
 ### post 수정
-PUT http://localhost:8080/api/v1/posts/{postId}
+PUT http://localhost:8080/api/v1/posts/16
 Authorization: Bearer {{ACCESS_TOKEN}}
 Content-Type: application/json
 
 {
-  "title": "string",
-  "content": "string",
+  "title": "changed",
+  "content": "changed",
   "tagName": "string"
 }
 
@@ -30,9 +30,8 @@ GET http://localhost:8080/api/v1/posts?tagName={tagName}
 Authorization: Bearer {{ACCESS_TOKEN}}
 Content-Type: application/json
 
-
 ### post 선택 조회
-GET http://localhost:8080/api/v1/posts/11
+GET http://localhost:8080/api/v1/posts/{postId}
 Authorization: Bearer {{ACCESS_TOKEN}}
 Content-Type: application/json
 
