@@ -1,4 +1,4 @@
-<img width="885" alt="image" src="https://github.com/JinkownHong/newsfeedProject/assets/161419351/6a26e1e7-9fc6-47cd-800f-c096dc660dc6"># 🚀 Newsfeed Project: Explore (Exhibition + Project)
+# 🚀 Newsfeed Project: Explore (Exhibition + Project)
 
 이번 프로젝트의 미션은 “뉴스피드 백엔드 개발 프로젝트”입니다.
 
